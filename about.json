@@ -1,0 +1,15 @@
+{
+  "name": "Gasing Circle Layout Component",
+  "about_url": "",
+  "license_url": "",
+  "authors": "Digital Gasing Edukasi Team",
+  "theme_version": "1.0",
+  "minimum_discourse_version": "3.1.0",
+  "color_schemes": {},
+  "assets": {},
+  "color_scheme_color_vars": {},
+  "component": true,
+  "modifier": {
+    "custom-homepage": true
+  }
+}

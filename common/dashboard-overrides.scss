@@ -1,0 +1,37 @@
+/* =============================================================
+   GASING CIRCLE — Dashboard body-class overrides
+   These rules are applied ONLY when .gh-dashboard-active is
+   added to <body> by the JS initializer.
+   ============================================================= */
+
+/* Hide everything Discourse normally renders on homepage
+   when our custom dashboard is active */
+body.gh-dashboard-active #main-outlet .full-width,
+body.gh-dashboard-active #main-outlet .list-controls,
+body.gh-dashboard-active #main-outlet .topic-list,
+body.gh-dashboard-active #main-outlet .navigation-container,
+body.gh-dashboard-active #main-outlet .category-breadcrumb,
+body.gh-dashboard-active #main-outlet .bulk-select,
+body.gh-dashboard-active #main-outlet .alert,
+body.gh-dashboard-active #main-outlet nav.navigation-container,
+body.gh-dashboard-active #main-outlet .container > h1 {
+  display: none !important;
+}
+
+body.gh-dashboard-active #main-outlet .container {
+  padding: 0 !important;
+  max-width: none !important;
+  width: 100% !important;
+}
+
+body.gh-dashboard-active {
+  background: var(--gh-surface, #f4f6fb) !important;
+}
+
+/* Also suppress the default "Discovery" banner / header image
+   that some themes inject above the topic list */
+body.gh-dashboard-active .custom-banner,
+body.gh-dashboard-active #custom-home-banner,
+body.gh-dashboard-active .header-banner {
+  display: none !important;
+}

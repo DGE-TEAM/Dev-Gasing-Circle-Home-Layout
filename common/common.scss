@@ -1,753 +1,842 @@
-/* ============================================
-   GASING COMMUNITY HOMEPAGE — v5
-   ============================================ */
+/* =============================================================
+   GASING CIRCLE — Homepage Dashboard  |  common/common.scss
+   Replaces the standard Discourse discovery page with a
+   rich multi-column dashboard layout.
+   ============================================================= */
 
+/* ── 1. CSS CUSTOM PROPERTIES ─────────────────────────────── */
 :root {
-  --gc-blue: #2563eb;
-  --gc-blue-dark: #1d4ed8;
-  --gc-blue-light: #dbeafe;
-  --gc-blue-gradient: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-  --gc-green: #16a34a;
-  --gc-green-light: #dcfce7;
-  --gc-orange: #f97316;
-  --gc-red: #ef4444;
-  --gc-red-light: #fef2f2;
-  --gc-gray-50: #f9fafb;
-  --gc-gray-100: #f3f4f6;
-  --gc-gray-200: #e5e7eb;
-  --gc-gray-300: #d1d5db;
-  --gc-gray-500: #6b7280;
-  --gc-gray-700: #374151;
-  --gc-gray-900: #111827;
-  --gc-radius: 16px;
-  --gc-radius-sm: 10px;
-  --gc-radius-xs: 6px;
-  --gc-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-  --gc-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-  --gc-shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.1);
-  --gc-font: "Nunito", "Segoe UI", system-ui, -apple-system, sans-serif;
-  --gc-font-display: "Poppins", "Nunito", system-ui, sans-serif;
+  /* Brand palette */
+  --gh-blue-900:     #0a1f5c;
+  --gh-blue-800:     #0d2b6e;
+  --gh-blue-700:     #1a4fba;
+  --gh-blue-600:     #1a73e8;
+  --gh-blue-500:     #2979ff;
+  --gh-blue-400:     #448aff;
+  --gh-blue-100:     #deeafd;
+  --gh-blue-50:      #f0f5ff;
+  --gh-teal-500:     #00bcd4;
+  --gh-teal-400:     #26c6da;
+  --gh-orange-500:   #ff6f00;
+  --gh-orange-400:   #ffa000;
+  --gh-green-500:    #43a047;
+  --gh-red-400:      #ef5350;
+
+  /* Neutrals */
+  --gh-white:        #ffffff;
+  --gh-surface:      #f4f6fb;
+  --gh-card:         #ffffff;
+  --gh-border:       #e0e7ef;
+  --gh-border-light: #eef1f7;
+
+  /* Text */
+  --gh-text-h:       #0f1c3f;
+  --gh-text-body:    #2d3748;
+  --gh-text-muted:   #6b7a99;
+  --gh-text-link:    #1a73e8;
+
+  /* Tags — category pill colours (extend as needed) */
+  --gh-tag-challenge:  #fff3e0;
+  --gh-tag-challenge-t:#e65100;
+  --gh-tag-perkalian:  #e8f5e9;
+  --gh-tag-perkalian-t:#2e7d32;
+  --gh-tag-materi:     #ede7f6;
+  --gh-tag-materi-t:   #4527a0;
+  --gh-tag-trainer:    #e3f2fd;
+  --gh-tag-trainer-t:  #0d47a1;
+  --gh-tag-permainan:  #fce4ec;
+  --gh-tag-permainan-t:#880e4f;
+  --gh-tag-default:    #eceff1;
+  --gh-tag-default-t:  #37474f;
+
+  /* Spacing & radii */
+  --gh-r-sm:   6px;
+  --gh-r-md:   14px;
+  --gh-r-lg:   20px;
+  --gh-r-xl:   28px;
+  --gh-r-card: 18px;
+
+  /* Shadows */
+  --gh-shadow-sm:   0 1px 6px  rgba(13,43,110,.07);
+  --gh-shadow-md:   0 3px 16px rgba(13,43,110,.10);
+  --gh-shadow-lg:   0 6px 32px rgba(13,43,110,.15);
+
+  /* Layout */
+  --gh-hero-h:        320px;
+  --gh-col-left:      1fr;
+  --gh-col-right:     340px;
+  --gh-gap:           20px;
+  --gh-font:          "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
-/* ─── HIDE DEFAULT DISCOURSE HEADER ─────────────────────────────────────────
-   We hide the stock header globally so the custom sidebar takes full control.
-   The .gasing-sidebar plugin replaces all navigation & profile chrome.
-   ─────────────────────────────────────────────────────────────────────────── */
-#site-header,
-.d-header,
-.d-header-wrap {
+/* ── 2. GLOBAL RESETS FOR HOMEPAGE ───────────────────────── */
+body.navigation-topics,
+body.navigation-latest {
+  background: var(--gh-surface) !important;
+  font-family: var(--gh-font);
+}
+
+/* Hide everything Discourse normally renders on the homepage */
+body.navigation-topics #main-outlet .full-width,
+body.navigation-latest #main-outlet .full-width,
+body.navigation-topics #main-outlet .list-controls,
+body.navigation-latest #main-outlet .list-controls,
+body.navigation-topics #main-outlet .topic-list,
+body.navigation-latest #main-outlet .topic-list,
+body.navigation-topics #main-outlet .navigation-container,
+body.navigation-latest #main-outlet .navigation-container,
+body.navigation-topics #main-outlet .category-breadcrumb,
+body.navigation-latest #main-outlet .category-breadcrumb,
+body.navigation-topics #main-outlet h1,
+body.navigation-latest #main-outlet h1 {
   display: none !important;
 }
 
-/* Compensate: remove the top-padding that Discourse normally adds for the header */
-#main-outlet-wrapper,
-#main-outlet,
-.wrap {
-  padding-top: 0 !important;
-  margin-top: 0 !important;
+/* Keep #main-outlet itself but strip padding */
+body.navigation-topics #main-outlet,
+body.navigation-latest #main-outlet {
+  padding: 0 !important;
+  max-width: none !important;
 }
 
-/* Hide default Discourse sidebar (we replace it) */
-#d-sidebar,
-.sidebar-wrapper,
-.sidebar-container {
-  display: none !important;
+/* ── 3. DASHBOARD SHELL ────────────────────────────────────── */
+#gh-dashboard {
+  font-family: var(--gh-font);
 }
 
-/* Remove padding Discourse applies when its own sidebar is active */
-body.has-sidebar-page .wrap,
-body.sidebar-animate .wrap {
-  padding-left: 0 !important;
-}
-
-/* ─── Custom homepage outlet padding reset ───────────────────────────────── */
-.custom-homepage #main-outlet-wrapper {
-  padding-top: 0;
-}
-
-/* ─── Remove white page background, use gray instead ────────────────────── */
-#main-outlet-wrapper,
-.custom-homepage-wrapper {
-  background: transparent !important;
-  background-color: transparent !important;
-}
-
-body.custom-homepage {
-  background: transparent !important;
-}
-
-/* ===== BASE =====
-   The sidebar (220px expanded / 64px collapsed) is a fixed element.
-   We center the page content within the remaining viewport space by using
-   auto margins AFTER accounting for the sidebar offset.
-   We do this via a wrapper that uses padding-left equal to the sidebar width,
-   letting margin: auto do the centering naturally inside it.
-*/
-.gc-homepage {
-  font-family: var(--gc-font);
-  /* Center within available space (whole page minus sidebar handled by body padding from sidebar plugin) */
-  max-width: 1100px;
-  width: 100%;
-  margin: 0 auto;
-  padding: 24px 24px 40px;
-  color: transparent;
-  box-sizing: border-box;
-}
-
-.gc-homepage *,
-.gc-homepage *::before,
-.gc-homepage *::after {
-  box-sizing: border-box;
-}
-
-/* ===== HERO BANNER ===== */
-.gc-hero {
-  /* Fallback gradient if image hasn't loaded yet */
-  background-color: #2563eb;
-  background-size: cover;
-  background-position: center top;
-  background-repeat: no-repeat;
-  border-radius: 20px;
-  padding: 40px 48px 80px; /* extra bottom padding for the curve cutout */
-  margin-bottom: 24px;
+/* ── 4. HERO BANNER ────────────────────────────────────────── */
+.gh-hero {
+  background: linear-gradient(
+    125deg,
+    var(--gh-blue-700) 0%,
+    var(--gh-blue-500) 55%,
+    var(--gh-teal-500) 100%
+  );
+  min-height: var(--gh-hero-h);
+  position: relative;
+  overflow: hidden;
+  padding: 40px 36px 48px;
   display: flex;
   align-items: flex-start;
-  justify-content: space-between;
-  position: relative;
-  overflow: visible; /* allow mascots to overflow slightly */
-  min-height: 220px;
-}
-
-/* Remove old pseudo-element decorations — the image handles the look */
-.gc-hero::before,
-.gc-hero::after {
-  display: none;
-}
-
-.gc-hero__content {
-  flex: 1;
-  z-index: 1;
-}
-
-.gc-hero__greeting {
-  font-family: var(--gc-font-display);
-  font-size: 28px;
-  font-weight: 800;
-  color: #fff;
-  margin: 0 0 16px;
-  line-height: 1.2;
-}
-
-.gc-hero__cta-text {
-  color: rgba(255, 255, 255, 0.92);
-  font-size: 15px;
-  line-height: 1.6;
-  margin: 0 0 16px;
-  max-width: 480px;
-}
-
-.gc-hero__cta-actions {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.gc-hero__cta-count {
-  color: rgba(255, 255, 255, 0.75);
-  font-size: 14px;
-}
-
-/* Hero Mascots Container */
-.gc-hero__mascots {
-  position: relative;
-  flex-shrink: 0;
-  width: 280px;
-  height: 200px;
-  z-index: 1;
-}
-
-.gc-hero__mascot-img {
-  position: absolute;
-  object-fit: contain;
-  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
-  pointer-events: none;
-}
-
-/* Maskot Creativity (ungu) - besar, posisi utama di kanan */
-.gc-hero__mascot-creativity {
-  width: 220px;
-  height: auto;
-  right: -20px;
-  top: -30px;
-  transform: rotate(5deg);
-  z-index: 2;
-}
-
-/* Maskot Logic (biru berkacamata) - kecil, mengintip dari bawah */
-.gc-hero__mascot-logic {
-  width: 120px;
-  height: auto;
-  left: -10px;
-  bottom: -10px;
-  transform: rotate(-8deg);
-  z-index: 1;
-}
-
-/* ===== BUTTONS ===== */
-.gc-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 24px;
-  border-radius: 50px;
-  font-family: var(--gc-font);
-  font-weight: 700;
-  font-size: 14px;
-  text-decoration: none !important;
-  cursor: pointer;
-  border: none;
-  transition: all 0.2s ease;
-  line-height: 1.4;
-}
-
-.gc-btn--primary {
-  background: var(--gc-gray-900);
-  color: #fff !important;
-}
-
-.gc-btn--primary:hover {
-  background: #000;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  color: #fff !important;
-}
-
-.gc-btn--success {
-  background: var(--gc-green);
-  color: #fff !important;
-}
-
-.gc-btn--success:hover {
-  background: #15803d;
-  color: #fff !important;
-}
-
-.gc-btn--outline {
-  background: rgba(255, 255, 255, 0.9);
-  color: var(--gc-gray-900) !important;
-  border: 1.5px solid var(--gc-gray-200);
-}
-
-.gc-btn--outline:hover {
-  background: #fff;
-  color: var(--gc-gray-900) !important;
-}
-
-.gc-btn--sm {
-  padding: 6px 14px;
-  font-size: 12px;
-  gap: 4px;
-}
-
-.gc-btn--game {
-  background: var(--gc-blue);
-  color: #fff !important;
-  width: 100%;
-  justify-content: center;
-  padding: 12px 24px;
-  font-size: 15px;
-}
-
-.gc-btn--game:hover {
-  background: var(--gc-blue-dark);
-  transform: translateY(-1px);
-  color: #fff !important;
-}
-
-/* ===== GRID LAYOUT ===== */
-.gc-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  padding: 0 24px; /* side padding for cards, since hero is full-width */
-}
-
-.gc-grid__left,
-.gc-grid__right {
-  display: flex;
   flex-direction: column;
-  gap: 24px;
-  min-width: 0;
-}
-
-/* ===== CARDS ===== */
-.gc-card {
-  background: #fff;
-  border-radius: var(--gc-radius);
-  padding: 24px;
-  box-shadow: var(--gc-shadow);
-  border: 1px solid var(--gc-gray-100);
-}
-
-.gc-card__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
-}
-
-.gc-card__title {
-  font-family: var(--gc-font-display);
-  font-size: 18px;
-  font-weight: 700;
-  margin: 0;
-  color: var(--gc-gray-900);
-}
-
-.gc-card__title--italic {
-  font-style: italic;
-}
-
-.gc-card__more {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 1.5px solid var(--gc-gray-200);
-  display: flex;
-  align-items: center;
   justify-content: center;
-  color: var(--gc-gray-500);
-  text-decoration: none !important;
-  transition: all 0.2s;
-  flex-shrink: 0;
-}
 
-.gc-card__more:hover {
-  border-color: var(--gc-blue);
-  color: var(--gc-blue);
-  background: var(--gc-blue-light);
-}
-
-/* ===== EXCLUSIVE CONTENT ===== */
-.gc-exclusive {
-  text-align: center;
-}
-
-.gc-exclusive__badge {
-  display: inline-block;
-  background: var(--gc-gray-900);
-  color: #fff;
-  font-size: 12px;
-  font-weight: 700;
-  padding: 4px 14px;
-  border-radius: 20px;
-  margin-bottom: 12px;
-}
-
-.gc-exclusive__desc {
-  color: var(--gc-gray-500);
-  font-size: 14px;
-  line-height: 1.6;
-  margin: 8px 0 20px;
-}
-
-.gc-exclusive__img-placeholder {
-  background: linear-gradient(135deg, #e0f2fe, #bfdbfe, #ddd6fe);
-  height: 200px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--gc-font-display);
-  font-size: 22px;
-  font-weight: 800;
-  color: var(--gc-blue-dark);
-  border-radius: var(--gc-radius-sm);
-}
-
-/* ===== TABS ===== */
-.gc-tabs {
-  display: flex;
-  gap: 4px;
-  margin-bottom: 16px;
-  border-bottom: 2px solid var(--gc-gray-100);
-}
-
-.gc-tabs__tab {
-  padding: 8px 16px;
-  font-family: var(--gc-font);
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--gc-gray-500);
-  background: none;
-  border: none;
-  border-bottom: 2.5px solid transparent;
-  cursor: pointer;
-  transition: color 0.2s;
-  margin-bottom: -2px;
-}
-
-.gc-tabs__tab--active {
-  color: var(--gc-blue);
-  border-bottom-color: var(--gc-blue);
-}
-
-.gc-tabs__tab:hover {
-  color: var(--gc-blue);
-}
-
-/* ===== TOPIC LIST ===== */
-.gc-topic-list {
-  display: flex;
-  flex-direction: column;
-}
-
-.gc-topic-item {
-  display: flex;
-  gap: 12px;
-  padding: 14px 4px;
-  border-bottom: 1px solid var(--gc-gray-100);
-  text-decoration: none !important;
-  color: inherit !important;
-  transition: background 0.15s;
-  border-radius: var(--gc-radius-xs);
-}
-
-.gc-topic-item:last-child {
-  border-bottom: none;
-}
-
-.gc-topic-item:hover {
-  background: var(--gc-gray-50);
-}
-
-.gc-topic-item__avatar-placeholder {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--gc-gray-200), var(--gc-gray-300));
-  flex-shrink: 0;
-}
-
-.gc-topic-item__content {
-  flex: 1;
-  min-width: 0;
-}
-
-.gc-topic-item__title {
-  font-size: 14px;
-  font-weight: 700;
-  margin: 0 0 4px;
-  line-height: 1.4;
-  color: var(--gc-gray-900);
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.gc-topic-item__meta {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-
-.gc-topic-item__age {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 12px;
-  color: var(--gc-gray-500);
-}
-
-.gc-topic-item__stats {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.gc-topic-item__likes,
-.gc-topic-item__replies {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 13px;
-  color: var(--gc-gray-500);
-}
-
-.gc-topic-item__likes svg {
-  color: var(--gc-red);
-  opacity: 0.7;
-}
-
-/* ===== TAGS ===== */
-.gc-tag {
-  display: inline-block;
-  padding: 2px 10px;
-  border-radius: 20px;
-  font-size: 11px;
-  font-weight: 600;
-  border: 1.5px solid var(--gc-blue);
-  color: var(--gc-blue);
-  background: transparent;
-}
-
-.gc-tag--green {
-  border-color: var(--gc-green);
-  color: var(--gc-green);
-  background: var(--gc-green-light);
-}
-
-/* ===== VIRTUAL MEET-UP ===== */
-.gc-meetup__cards {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.gc-meetup__event {
-  border-radius: var(--gc-radius-sm);
-  overflow: hidden;
-  position: relative;
-  min-height: 180px;
-  display: flex;
-  flex-direction: column;
-}
-
-.gc-meetup__event-img {
-  width: 100%;
-  height: 100%;
-  min-height: 180px;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-.gc-meetup__event-img--alt {
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-}
-
-/* Button di pojok kanan atas card meetup */
-.gc-meetup__event-overlay {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  z-index: 2;
-}
-
-.gc-meetup__event-info {
-  padding: 10px 12px;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0));
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  color: #fff;
-  z-index: 2;
-}
-
-.gc-meetup__event-info h3 {
-  font-size: 14px;
-  font-weight: 700;
-  margin: 0 0 2px;
-  color: #fff;
-}
-
-.gc-meetup__event-info span {
-  font-size: 11px;
-  opacity: 0.85;
-  color: #fff;
-}
-
-/* ===== NEWS ===== */
-.gc-news__list {
-  display: flex;
-  flex-direction: column;
-}
-
-.gc-news__item {
-  display: flex;
-  gap: 12px;
-  padding: 12px 4px;
-  text-decoration: none !important;
-  color: inherit !important;
-  border-bottom: 1px solid var(--gc-gray-100);
-  transition: opacity 0.15s;
-}
-
-.gc-news__item:last-child {
-  border-bottom: none;
-}
-
-.gc-news__item:hover {
-  opacity: 0.8;
-}
-
-.gc-news__thumb {
-  width: 64px;
-  height: 64px;
-  border-radius: var(--gc-radius-xs);
-  background: linear-gradient(135deg, var(--gc-gray-200), var(--gc-gray-300));
-  flex-shrink: 0;
-}
-
-.gc-news__content {
-  flex: 1;
-  min-width: 0;
-}
-
-.gc-news__title {
-  font-size: 13px;
-  font-weight: 700;
-  margin: 0 0 4px;
-  line-height: 1.4;
-  color: var(--gc-gray-900);
-}
-
-.gc-news__date {
-  font-size: 12px;
-  color: var(--gc-gray-500);
-}
-
-/* ===== MINI GAME ===== */
-.gc-minigame {
-  overflow: hidden;
-  padding: 0 !important;
-}
-
-.gc-minigame__illustration {
-  width: 100%;
-  height: 220px;
-  background: linear-gradient(135deg, #34d399, #059669, #047857);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  position: relative;
-}
-
-.gc-minigame__mascot {
-  width: 180px;
-  height: auto;
-  object-fit: contain;
-  filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.2));
-  transition: transform 0.3s ease;
-}
-
-.gc-minigame:hover .gc-minigame__mascot {
-  transform: scale(1.05) rotate(3deg);
-}
-
-.gc-minigame__content {
-  padding: 20px 24px 24px;
-  text-align: center;
-}
-
-.gc-minigame__title {
-  font-family: var(--gc-font-display);
-  font-size: 20px;
-  font-weight: 800;
-  margin: 10px 0 6px;
-  color: var(--gc-gray-900);
-}
-
-.gc-minigame__desc {
-  font-size: 13px;
-  color: var(--gc-gray-500);
-  margin: 0 0 16px;
-  line-height: 1.5;
-}
-
-/* ===== BELAJAR ===== */
-.gc-belajar__label {
-  display: inline-block;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--gc-gray-500);
-  margin-bottom: 8px;
-}
-
-/* ===== LOADING ===== */
-.gc-loading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 40px 0;
-  color: var(--gc-gray-500);
-  font-size: 14px;
-}
-
-.gc-loading__spinner {
-  width: 24px;
-  height: 24px;
-  border: 3px solid var(--gc-gray-200);
-  border-top-color: var(--gc-blue);
-  border-radius: 50%;
-  animation: gc-spin 0.8s linear infinite;
-}
-
-@keyframes gc-spin {
-  to {
-    transform: rotate(360deg);
+  /* Geometric noise overlay */
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle at 80% 50%, rgba(255,255,255,.06) 0%, transparent 60%),
+      url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    pointer-events: none;
   }
-}
 
-/* ===== RESPONSIVE ===== */
-@media (max-width: 860px) {
-  .gc-grid {
-    grid-template-columns: 1fr;
+  .gh-hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 520px;
   }
-  .gc-hero {
-    flex-direction: column;
-    padding: 24px;
-    text-align: center;
+
+  .gh-hero-greeting {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--gh-white);
+    margin: 0 0 16px;
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+    text-shadow: 0 2px 12px rgba(0,0,0,.15);
   }
-  .gc-hero__greeting {
-    font-size: 22px;
+
+  .gh-hero-promo {
+    font-size: 16px;
+    font-weight: 500;
+    color: rgba(255,255,255,.90);
+    margin: 0 0 24px;
+    line-height: 1.55;
+    max-width: 420px;
   }
-  .gc-hero__cta-actions {
-    justify-content: center;
+
+  .gh-hero-cta-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
     flex-wrap: wrap;
   }
-  .gc-hero__mascots {
-    width: 200px;
-    height: 150px;
-    margin-top: 16px;
+
+  .gh-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 22px;
+    background: var(--gh-blue-800);
+    color: var(--gh-white);
+    border: none;
+    border-radius: var(--gh-r-xl);
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all .2s;
+    box-shadow: 0 4px 16px rgba(0,0,0,.20);
+
+    .gh-cta-arrow {
+      width: 20px;
+      height: 20px;
+      background: rgba(255,255,255,.18);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+    }
+
+    &:hover {
+      background: var(--gh-blue-900);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 22px rgba(0,0,0,.28);
+      color: var(--gh-white);
+      text-decoration: none;
+    }
   }
-  .gc-hero__mascot-creativity {
-    width: 160px;
+
+  .gh-social-proof {
+    font-size: 13px;
+    color: rgba(255,255,255,.80);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    &::before {
+      content: "👥";
+      font-size: 14px;
+    }
+  }
+
+  /* Illustration anchor (right side) */
+  .gh-hero-illustrations {
+    position: absolute;
     right: 0;
-    top: -10px;
-  }
-  .gc-hero__mascot-logic {
-    width: 90px;
-    left: 0;
     bottom: 0;
-  }
-  .gc-meetup__cards {
-    grid-template-columns: 1fr;
+    top: 0;
+    width: 360px;
+    pointer-events: none;
+    z-index: 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    overflow: hidden;
+
+    img {
+      height: 100%;
+      object-fit: contain;
+      object-position: bottom right;
+    }
   }
 }
 
-@media (max-width: 480px) {
-  .gc-homepage {
-    padding: 0 12px 24px;
+/* ── 5. MAIN DASHBOARD GRID ────────────────────────────────── */
+.gh-dashboard-grid {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 24px 24px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gh-gap);
+}
+
+/* Row 1: 2-col split (Eksklusif | Meet-Up) */
+.gh-row-top {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--gh-gap);
+}
+
+/* Row 2: main content (large left + narrow right) */
+.gh-row-main {
+  display: grid;
+  grid-template-columns: var(--gh-col-left) var(--gh-col-right);
+  gap: var(--gh-gap);
+  align-items: start;
+}
+
+/* Row 3: same 2-col */
+.gh-row-bottom {
+  display: grid;
+  grid-template-columns: var(--gh-col-left) var(--gh-col-right);
+  gap: var(--gh-gap);
+  align-items: start;
+}
+
+/* ── 6. SHARED CARD BASE ───────────────────────────────────── */
+.gh-card {
+  background: var(--gh-card);
+  border-radius: var(--gh-r-card);
+  border: 1.5px solid var(--gh-border-light);
+  box-shadow: var(--gh-shadow-sm);
+  overflow: hidden;
+  transition: box-shadow .2s;
+
+  &:hover { box-shadow: var(--gh-shadow-md); }
+
+  .gh-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 20px 12px;
+
+    h2 {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--gh-text-h);
+      margin: 0;
+    }
+
+    .gh-see-all {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1.5px solid var(--gh-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      color: var(--gh-text-muted);
+      transition: all .15s;
+      font-size: 13px;
+
+      &:hover {
+        border-color: var(--gh-blue-400);
+        color: var(--gh-blue-600);
+        background: var(--gh-blue-50);
+      }
+    }
   }
-  .gc-hero {
-    padding: 20px;
-    margin-bottom: 16px;
+}
+
+/* ── 7. EKSKLUSIF KONTEN CARD ──────────────────────────────── */
+.gh-eksklusif-card {
+  background: linear-gradient(160deg, #fff9f0 0%, var(--gh-white) 100%);
+  position: relative;
+  min-height: 280px;
+
+  .gh-ek-badge {
+    display: inline-flex;
+    padding: 4px 12px;
+    background: var(--gh-blue-600);
+    color: white;
+    border-radius: var(--gh-r-xl);
+    font-size: 11px;
+    font-weight: 700;
+    margin: 20px 20px 0;
   }
-  .gc-hero__greeting {
+
+  .gh-ek-content {
+    padding: 12px 20px 20px;
+  }
+
+  .gh-ek-title {
     font-size: 20px;
+    font-weight: 800;
+    color: var(--gh-text-h);
+    margin: 0 0 8px;
   }
-  .gc-card {
-    padding: 16px;
-    border-radius: 12px;
+
+  .gh-ek-subtitle {
+    font-size: 13px;
+    color: var(--gh-text-muted);
+    line-height: 1.55;
+    margin: 0 0 16px;
   }
-  .gc-grid {
+
+  .gh-ek-visual {
+    width: 100%;
+    border-radius: var(--gh-r-md);
+    overflow: hidden;
+    aspect-ratio: 16/7;
+    background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Placeholder when no image */
+    .gh-ek-placeholder {
+      font-size: 48px;
+    }
+  }
+}
+
+/* ── 8. VIRTUAL MEET-UP CARD ───────────────────────────────── */
+.gh-meetup-card {
+  .gh-meetup-events {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 0 18px 18px;
+  }
+
+  .gh-event-item {
+    border-radius: var(--gh-r-md);
+    overflow: hidden;
+    position: relative;
+    aspect-ratio: 4/3;
+    cursor: pointer;
+    background: var(--gh-blue-100);
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform .3s;
+    }
+
+    &:hover img { transform: scale(1.04); }
+
+    /* Dark overlay gradient */
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,.7) 0%, transparent 55%);
+    }
+
+    .gh-event-info {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 10px;
+      z-index: 1;
+    }
+
+    .gh-event-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: white;
+      margin: 0 0 3px;
+      line-height: 1.3;
+    }
+
+    .gh-event-meta {
+      font-size: 10px;
+      color: rgba(255,255,255,.80);
+      margin: 0;
+    }
+
+    .gh-event-action {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      z-index: 1;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      border-radius: var(--gh-r-xl);
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: all .15s;
+
+      &.joined {
+        background: var(--gh-blue-600);
+        color: white;
+        .gh-action-arrow { display: inline; }
+      }
+
+      &.register {
+        background: rgba(255,255,255,.92);
+        color: var(--gh-text-h);
+        .gh-action-arrow { display: inline; }
+      }
+
+      .gh-action-arrow { font-size: 8px; margin-left: 2px; }
+    }
+  }
+}
+
+/* ── 9. TOPIC LIST WIDGETS (Komunitas + Belajar) ───────────── */
+.gh-topic-widget {
+  .gh-tw-tabs {
+    display: flex;
     gap: 16px;
+    padding: 0 20px 14px;
+    border-bottom: 1.5px solid var(--gh-border-light);
+
+    .gh-tw-tab {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--gh-text-muted);
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0 0 6px;
+      position: relative;
+      transition: color .15s;
+
+      &.active {
+        color: var(--gh-blue-600);
+
+        &::after {
+          content: "";
+          position: absolute;
+          bottom: -1px;
+          left: 0;
+          right: 0;
+          height: 2px;
+          background: var(--gh-blue-600);
+          border-radius: 2px;
+        }
+      }
+
+      &:hover { color: var(--gh-blue-500); }
+    }
   }
+
+  .gh-tw-tab-label {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--gh-text-muted);
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    padding: 14px 20px 8px;
+  }
+
+  .gh-tw-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .gh-tw-item {
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 10px;
+    padding: 13px 20px;
+    border-bottom: 1px solid var(--gh-border-light);
+    cursor: pointer;
+    transition: background .14s;
+
+    &:last-child { border-bottom: none; }
+    &:hover { background: var(--gh-blue-50); }
+
+    .gh-tw-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+      background: var(--gh-blue-400);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: white;
+      overflow: hidden;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+      }
+    }
+
+    .gh-tw-body {}
+
+    .gh-tw-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--gh-text-h);
+      margin: 0 0 3px;
+      line-height: 1.35;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .gh-tw-reply-info {
+      font-size: 11.5px;
+      color: var(--gh-text-muted);
+      margin: 0 0 7px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+
+      svg { width: 11px; height: 11px; }
+    }
+
+    .gh-tw-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .gh-cat-pill {
+      display: inline-flex;
+      padding: 2px 9px;
+      border-radius: var(--gh-r-xl);
+      font-size: 10.5px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .gh-tw-stat {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 11.5px;
+      color: var(--gh-text-muted);
+
+      svg { width: 12px; height: 12px; }
+    }
+  }
+
+  .gh-tw-loading {
+    padding: 24px;
+    text-align: center;
+    color: var(--gh-text-muted);
+    font-size: 13px;
+
+    .gh-spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--gh-border);
+      border-top-color: var(--gh-blue-600);
+      border-radius: 50%;
+      animation: gh-spin .8s linear infinite;
+      display: inline-block;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+  }
+}
+
+/* ── 10. GASING ACADEMY NEWS (RIGHT COLUMN) ────────────────── */
+.gh-news-card {
+  .gh-news-list {
+    list-style: none;
+    margin: 0;
+    padding: 0 0 6px;
+  }
+
+  .gh-news-item {
+    display: grid;
+    grid-template-columns: 68px 1fr;
+    gap: 12px;
+    padding: 12px 18px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background .14s;
+    border-bottom: 1px solid var(--gh-border-light);
+
+    &:last-child { border-bottom: none; }
+    &:hover { background: var(--gh-blue-50); }
+
+    .gh-news-thumb {
+      width: 68px;
+      height: 50px;
+      border-radius: var(--gh-r-sm);
+      object-fit: cover;
+      background: linear-gradient(135deg, var(--gh-blue-100), var(--gh-blue-50));
+      flex-shrink: 0;
+      overflow: hidden;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: var(--gh-r-sm);
+      }
+    }
+
+    .gh-news-body {}
+
+    .gh-news-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--gh-text-h);
+      line-height: 1.35;
+      margin: 0 0 5px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .gh-news-meta {
+      font-size: 11px;
+      color: var(--gh-text-muted);
+    }
+  }
+}
+
+/* ── 11. GAME CARD ─────────────────────────────────────────── */
+.gh-game-card {
+  background: linear-gradient(160deg, #e8f5e9 0%, #c8e6c9 100%);
+  border: 1.5px solid #a5d6a7;
+  display: flex;
+  flex-direction: column;
+
+  .gh-game-visual {
+    width: 100%;
+    aspect-ratio: 4/3;
+    overflow: hidden;
+    position: relative;
+    background: linear-gradient(160deg, #43a047, #1b5e20);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .gh-game-placeholder {
+      font-size: 64px;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,.2));
+    }
+  }
+
+  .gh-game-body {
+    padding: 16px 18px 18px;
+  }
+
+  .gh-game-tag {
+    display: inline-flex;
+    padding: 3px 10px;
+    background: rgba(255,255,255,.8);
+    border-radius: var(--gh-r-xl);
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--gh-green-500);
+    margin-bottom: 8px;
+    border: 1px solid rgba(67,160,71,.25);
+  }
+
+  .gh-game-title {
+    font-size: 17px;
+    font-weight: 800;
+    color: #1b5e20;
+    margin: 0 0 6px;
+    line-height: 1.25;
+  }
+
+  .gh-game-desc {
+    font-size: 12.5px;
+    color: #388e3c;
+    margin: 0 0 16px;
+    line-height: 1.5;
+  }
+
+  .gh-game-cta {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background: var(--gh-blue-600);
+    color: white;
+    border: none;
+    border-radius: var(--gh-r-md);
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    transition: all .2s;
+    letter-spacing: .3px;
+
+    &:hover {
+      background: var(--gh-blue-700);
+      color: white;
+      text-decoration: none;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(26,79,186,.3);
+    }
+  }
+}
+
+/* ── 12. CATEGORY PILL COLORS ──────────────────────────────── */
+.gh-cat-pill {
+  &[data-cat="challenge"]         { background: var(--gh-tag-challenge); color: var(--gh-tag-challenge-t); }
+  &[data-cat="perkalian"]         { background: var(--gh-tag-perkalian); color: var(--gh-tag-perkalian-t); }
+  &[data-cat="materi-gasing"],
+  &[data-cat="materi"]            { background: var(--gh-tag-materi); color: var(--gh-tag-materi-t); }
+  &[data-cat="materi-trainer-utama"],
+  &[data-cat="trainer"]           { background: var(--gh-tag-trainer); color: var(--gh-tag-trainer-t); }
+  &[data-cat="permainan-di-pelatihan"],
+  &[data-cat="permainan"]         { background: var(--gh-tag-permainan); color: var(--gh-tag-permainan-t); }
+  /* Default fallback */
+  &[data-cat]                     { background: var(--gh-tag-default); color: var(--gh-tag-default-t); }
+}
+
+/* ── 13. GLOBAL SPINNER KEYFRAME ──────────────────────────── */
+@keyframes gh-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── 14. ACCESSIBILITY / FOCUS ─────────────────────────────── */
+.gh-cta-btn:focus-visible,
+.gh-game-cta:focus-visible,
+.gh-tw-tab:focus-visible,
+.gh-see-all:focus-visible {
+  outline: 2px solid var(--gh-blue-400);
+  outline-offset: 2px;
+}
+
+/* ── 15. RESPONSIVE ────────────────────────────────────────── */
+@media (max-width: 1080px) {
+  :root { --gh-col-right: 300px; }
+}
+
+@media (max-width: 860px) {
+  .gh-row-top,
+  .gh-row-main,
+  .gh-row-bottom {
+    grid-template-columns: 1fr;
+  }
+
+  .gh-hero {
+    padding: 28px 20px 36px;
+
+    .gh-hero-greeting { font-size: 24px; }
+    .gh-hero-illustrations { display: none; }
+  }
+
+  .gh-dashboard-grid { padding: 16px 14px 32px; }
+}
+
+@media (max-width: 560px) {
+  .gh-meetup-card .gh-meetup-events {
+    grid-template-columns: 1fr;
+  }
+
+  .gh-hero .gh-hero-greeting { font-size: 20px; }
+}
+
+/* ── 16. DARK MODE COMPAT ──────────────────────────────────── */
+.d-dark .gh-card,
+[data-theme-key*="dark"] .gh-card {
+  background: #1a2035;
+  border-color: #2a3352;
+
+  .gh-card-header h2,
+  .gh-tw-title,
+  .gh-news-title,
+  .gh-ek-title { color: #e2e8f0; }
+
+  .gh-tw-item:hover,
+  .gh-news-item:hover { background: rgba(255,255,255,.04); }
 }

@@ -1,16 +1,14 @@
 {
-  "name": "Gasing Community Homepage",
-  "about_url": "https://github.com/gasing-community/homepage-theme",
-  "license_url": "https://github.com/gasing-community/homepage-theme/blob/main/LICENSE",
+  "name": "Gasing Circle Layout",
+  "about_url": null,
+  "license_url": null,
   "component": true,
+  "authors": "Digital Gasing Edukasi Team",
+  "theme_version": "1.0.0",
   "minimum_discourse_version": "3.1.0",
-  "assets": {
-    "mascot_logic": "assets/mascot-logic.svg",
-    "mascot_communication": "assets/mascot-communication.svg",
-    "mascot_creativity": "assets/mascot-creativity.svg",
-    "hero_bg": "assets/hero-bg.png"
-  },
+  "assets": [],
+  "color_schemes": [],
   "modifiers": {
-    "custom_homepage": true
+    "serialize_topic_excerpts": true
   }
 }

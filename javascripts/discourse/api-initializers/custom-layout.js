@@ -8,7 +8,7 @@ import { apiInitializer } from "discourse/lib/api";
 import { withPluginApi } from "discourse/lib/plugin-api";
 
 // ─── CONSTANTS ─────────────────────────────────────────────
-const TARGET_CATEGORY_SLUG = "gasing-academy-news";
+const TARGET_CATEGORY_SLUG = "ga-updates";
 const LAYOUT_CONTAINER_ID  = "gc-layout-root";
 const FILTER_LABELS = ["Pendidikan", "Pelatihan", "Dunia", "Lainnya"];
 
@@ -794,8 +794,7 @@ export default apiInitializer("0.8", (api) => {
     // Small tick to let Discourse render the outlet first
     setTimeout(() => {
       if (
-        url.includes(`/c/${TARGET_CATEGORY_SLUG}`) ||
-        url.includes("/c/gasing")
+        url.includes(`/c/${TARGET_CATEGORY_SLUG}`)
       ) {
         mountLayout();
       } else {

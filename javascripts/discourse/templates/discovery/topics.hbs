@@ -11,15 +11,15 @@
   without any modification — ensuring full backward compatibility.
 }}
 {{#if this.model.category}}
-  {{#if (eq this.model.category.slug "ga-updates")}}
-    {{!
+  {{#if (eq this.model.category.slug "gasing-academy-news")}}
+    {{! 
       The gc-discovery-anchor div serves as a mount target for the JS layout.
       The standard topic-list is rendered below it so Discourse route logic
       still functions (scroll position, breadcrumbs, etc.) but it will be
       visually hidden via CSS for this category.
     }}
-    <div id="gc-discovery-anchor"
-         data-category-slug="ga-updates"
+    <div id="gc-discovery-anchor" 
+         data-category-slug="gasing-academy-news"
          data-category-id="{{this.model.category.id}}">
     </div>
   {{/if}}

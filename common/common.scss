@@ -1054,3 +1054,126 @@ body.category-gasing-academy-news .sidebar-wrapper .sidebar-section-link-wrapper
   border-left: 3px solid var(--gc-blue-600);
   padding-left: calc(var(--d-sidebar-section-link-prefix-width, 12px) - 3px);
 }
+
+/* ── FIX v1.1: SVG SIZE CONSTRAINTS ─────────────────────────
+   Prevent SVG icons from inheriting container size.
+   All SVGs in our layout must be constrained explicitly.    */
+
+/* Hero search icon wrapper */
+.gc-hero-search .gc-search-icon-wrap svg,
+.gc-hero-search svg {
+  width: 16px !important;
+  height: 16px !important;
+  min-width: 16px !important;
+  flex-shrink: 0;
+}
+
+/* Hero title — no SVG should be in h1, but safety net */
+.gc-hero-banner h1 svg {
+  width: 22px !important;
+  height: 22px !important;
+  vertical-align: middle;
+}
+
+/* Empty state icon — controlled size, not full-width */
+.gc-empty-pane .gc-empty-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  opacity: 0.3;
+  margin: 0 auto 12px;
+
+  svg {
+    width: 48px !important;
+    height: 48px !important;
+  }
+}
+
+/* Card placeholder icon */
+.gc-card-image--placeholder {
+  height: 100px !important;
+  background: linear-gradient(135deg, var(--gc-blue-100), var(--gc-blue-50)) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  .gc-placeholder-icon svg {
+    width: 24px !important;
+    height: 24px !important;
+    opacity: 0.4;
+  }
+}
+
+/* Avatar images in topic cards */
+.gc-card-authors .gc-avatar-img {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid white;
+  margin-left: -6px;
+  object-fit: cover;
+
+  &:first-child { margin-left: 0; }
+}
+
+.gc-card-footer-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Icon buttons — cap SVG size */
+.gc-icon-btn svg,
+.gc-tab-btn svg {
+  width: 15px !important;
+  height: 15px !important;
+  flex-shrink: 0;
+}
+
+/* Action bar stats icons */
+.gc-meta-item svg,
+.gc-card-date svg,
+.gc-stat svg {
+  width: 12px !important;
+  height: 12px !important;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+/* Reply section icons */
+.gc-reply-action svg,
+.gc-more-item svg,
+.gc-inline-reply-btn svg {
+  width: 13px !important;
+  height: 13px !important;
+  flex-shrink: 0;
+}
+
+/* ── FIX v1.1: HIDE AIR THEME BANNER ON CATEGORY PAGE ──────
+   Target the Air theme's discovery banner specifically when
+   body has the category class.                              */
+body.category-gasing-academy-news .discovery-banner,
+body.category-gasing-academy-news .custom-banner,
+body.category-gasing-academy-news .custom-banner-content,
+body.category-gasing-academy-news .search-banner,
+body.category-gasing-academy-news .banner-search,
+body.category-gasing-academy-news [data-outlet="discovery-above"],
+body.category-gasing-academy-news [data-outlet="above-site-header"],
+
+/* The Air theme injects via below-site-header too */
+body.category-gasing-academy-news .below-site-header-outlet,
+body.category-gasing-academy-news .above-main-insert {
+  display: none !important;
+}
+
+/* Hide main-outlet siblings that are NOT our layout wrapper */
+body.category-gasing-academy-news #main-outlet .container > *:not(#gc-layout-root) {
+  display: none !important;
+}
+
+/* Always show our layout root */
+body.category-gasing-academy-news #gc-layout-root {
+  display: block !important;
+}

@@ -1,9 +1,9 @@
 {
-  "name": "Gasing Community _ Homepage - Godzilla Cupu",
-  "about_url": "https://github.com/gasing-community/homepage-theme",
-  "license_url": "https://github.com/gasing-community/homepage-theme/blob/main/LICENSE",
+  "name": "Gasing Circle - Gasing Academy Homepage Layout",
+  "about_url": null,
+  "license_url": null,
+  "authors": "Digital Gasing Edukasi Team",
   "component": true,
-  "minimum_discourse_version": "3.1.0",
   "assets": {
     "mascot_logic": "assets/mascot-logic.svg",
     "mascot_communication": "assets/mascot-communication.svg",

@@ -1,162 +1,103 @@
 # Gasing Circle — Homepage Dashboard Theme Component
 
-Replaces the standard Discourse discovery (topic list) homepage with a
-**multi-column, widget-based dashboard** styled after the target Figma design.
+Replaces the standard Discourse discovery (topic list) homepage with a **multi-column, widget-based dashboard** styled after the Gasing design system.
 
 ---
 
 ## File Structure
 
 ```
-gasing-homepage/
-├── about.json
-├── settings.yml                          ← Admin-editable config
+gasing-home-layout/
+├── about.json                  ← Metadata, asset definitions & connector modifiers
+├── settings.yml                ← Admin-editable configuration
 ├── common/
-│   ├── common.scss                       ← All CSS variables, layout, cards
-│   └── dashboard-overrides.scss          ← Body-class hides for default list
+│   └── common.scss             ← Global variables and layout resets
+├── stylesheets/
+│   └── gasing-homepage.scss    ← Component-specific SCSS (cards, hero, grids)
 └── javascripts/
     └── discourse/
-        └── api-initializers/
-            └── homepage-dashboard.js     ← Full dashboard engine
+        ├── components/
+        │   ├── gasing-homepage.js   ← Component logic (Glimmer)
+        │   └── gasing-homepage.hbs  ← Component template
+        └── connectors/
+            └── custom-homepage/
+                └── gasing-homepage-connector.hbs ← Injection point
 ```
 
 ---
 
 ## Installation
 
-Same process as the Academy News component:
-
 1. **Admin → Customize → Themes → Install → From ZIP file**
-2. Upload `gasing-homepage.zip`
-3. Enable and associate with your active theme
-
-> Both this component and `gasing-circle-theme` (for the Academy News category)
-> can be active at the same time — they target different routes and don't conflict.
+2. Upload the repository ZIP or install via Git.
+3. Enable and associate with your active theme.
+4. Ensure the `custom_homepage` modifier is active (handled by `about.json`).
 
 ---
 
-## Architecture Q&A (from the brief)
+## Architecture
 
-### "Should I override `discovery.hbs` or use `registerConnector`?"
+This component uses modern Discourse theme patterns:
 
-**Neither — we use pure DOM injection.**
-
-| Approach | Pros | Cons |
-|---|---|---|
-| `discovery.hbs` override | Clean Ember way | Breaks on Discourse updates; hard to scope to homepage only |
-| `api.registerConnector` | Supported API | Connectors add content *alongside* the existing list, not *replacing* it; CSS removal is still needed |
-| **DOM injection via `onPageChange`** (chosen) | Zero Ember internals; scoped to homepage only; auto-cleans on navigate away | Requires body-class CSS trick to hide original list |
-
-The chosen approach:
-1. `api.onPageChange(url)` fires on every SPA navigation
-2. If `url` is the homepage, we prepend `#gh-dashboard-wrapper` to `#main-outlet`
-3. A `body.gh-dashboard-active` class is added → CSS hides the standard topic list
-4. On navigating *away*, `unmountDashboard()` removes the element and the class
-
-### "Why not `api.registerConnector`?"
-
-`registerConnector("discovery-list-container-top", ...)` would inject content
-*above* the topic list — but we need to *replace* the list entirely. We'd still
-need the body-class CSS trick. The DOM injection approach is simpler and gives
-us full control over the render lifecycle.
+- **Glimmer Components**: The entire dashboard is a standalone `<GasingHomepage />` component.
+- **Connectors**: The component is injected into the homepage using the `custom-homepage` connector (activated by `"custom_homepage": true` in `about.json`).
+- **Data Fetching**: Uses Discourse's internal `ajax` helper to fetch topic lists asynchronously.
+- **Scoped Styling**: Uses a `gasing-home-active` body class to manage layout overrides and hide standard Discourse elements when the dashboard is visible.
 
 ---
 
 ## Dashboard Layout
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│  HERO BANNER (full width, gradient blue→teal)               │
-│  "Selamat Datang, [Username]!"  CTA button  Illustrations   │
-└─────────────────────────────────────────────────────────────┘
-┌──────────────────────────┬──────────────────────────────────┐
-│  Eksklusif Konten (promo)│  Virtual Meet-Up Selanjutnya     │
-│  (static card + badge)   │  (2 event tiles, fetched API)    │
-└──────────────────────────┴──────────────────────────────────┘
-┌────────────────────────────────────┬────────────────────────┐
-│  Ada Apa di Komunitas Gasing?      │  Gasing Academy News   │
-│  (Trending / Latest tabs)          │  (thumbnailed list)    │
-│  ← fetched from /c/forum           │  ← /c/gasing-academy…  │
-└────────────────────────────────────┴────────────────────────┘
-┌────────────────────────────────────┬────────────────────────┐
-│  Ayo Belajar Gasing Bersama!       │  Game Card             │
-│  (Latest only, no tabs)            │  Katak dan Daun Teratai│
-│  ← fetched from /c/materi-gasing   │  (static promo card)   │
-└────────────────────────────────────┴────────────────────────┘
-```
+The dashboard is organized into a hero section and a two-column grid:
+
+| Section | Content Type | Source |
+|---|---|---|
+| **Hero Banner** | Greeting & CTA | `settings.yml` + Hardcoded |
+| **Eksklusif Konten** | Promo Card | Static (in template) |
+| **Komunitas Gasing** | Trending / Latest Tabs | `/top/weekly.json` & `/latest.json` |
+| **Gasing Library** | Latest Materials | `/c/gasing-library/l/latest.json` |
+| **Virtual Meet-Up** | Event Tiles | Static (in template) |
+| **Academy News** | News List | `/c/ga-update/l/latest.json` |
+| **Mini Game** | Promo Card | Static (in template) |
 
 ---
 
 ## Data Fetching
 
-All topic data is fetched via Discourse's **public JSON API** — no custom
-endpoints, no Ruby, no plugin needed:
+All data is fetched via Discourse's **public JSON API** using `Promise.allSettled` for performance:
 
-| Widget | Endpoint | Sort |
+| Widget | Endpoint | Count |
 |---|---|---|
-| Komunitas Gasing (Trending) | `/c/forum.json?order=activity` | activity |
-| Komunitas Gasing (Latest) | `/c/forum.json` | latest |
-| Gasing Academy News | `/c/gasing-academy-news.json` | latest |
-| Belajar Gasing | `/c/materi-gasing.json` | latest |
-| Virtual Meet-Up | `/c/virtual-meet-up.json` | latest |
-
-All fetches run **concurrently** via `Promise.all` — the dashboard renders
-in one paint after all data arrives.
+| Komunitas (Trending) | `/top/weekly.json` | 5 topics |
+| Komunitas (Latest) | `/latest.json` | 5 topics |
+| Academy News | `/c/ga-update/l/latest.json` | 3 topics |
+| Gasing Library | `/c/gasing-library/l/latest.json` | 5 topics |
 
 ---
 
-## Adding Illustrations to the Hero
+## Configuration & Assets
 
-1. Upload your illustration PNGs via **Admin → Customize → Themes → [this theme] → Assets**
-2. In `homepage-dashboard.js`, find `buildHero()` and replace the placeholder comment:
+### Theme Settings (`settings.yml`)
 
-```js
-// FROM:
-<!-- <img src="{{theme_asset 'hero-char-1.png'}}" /> -->
+The following settings can be configured via the Discourse Admin UI:
+- `hero_greeting`: Custom welcome text.
+- `hero_cta_text`: Main call-to-action description.
+- `hero_cta_button_text`: Label for the CTA button.
+- `hero_cta_link`: Destination URL for the CTA button.
+- `hero_cta_count_text`: Social proof/counter text (e.g., "50 guru mendaftar").
 
-// TO (in the JS string):
-<img src="${settings.theme_uploads_local.hero_char_1}" alt="" />
-```
+### Theme Assets (`about.json`)
 
-Or, use Discourse theme settings of type `upload` in `settings.yml`:
-```yaml
-hero_character_1:
-  type: upload
-  default: ""
-```
-Then reference in JS as `settings.theme_uploads.hero_character_1`.
-
----
-
-## Adding a Custom Eksklusif Konten Image
-
-Same approach — upload via theme assets and reference in `buildEksklusifCard()`.
-
----
-
-## Extending Category Slugs
-
-Edit the `CAT` constant at the top of `homepage-dashboard.js`:
-
-```js
-const CAT = {
-  komunitas: "your-forum-slug",
-  news: "your-news-slug",
-  belajar: "your-materials-slug",
-  meetup: "your-meetup-slug",
-};
-```
-
----
-
-## Category Pill Colors
-
-Add new entries to the `catDataKey()` function and corresponding CSS classes
-in `common.scss` under section 12 (CATEGORY PILL COLORS).
+Assets are defined in `about.json` and can be accessed in the JS component via `settings.theme_uploads`:
+- `mascot_logic`: SVG illustration for logic mascot.
+- `mascot_communication`: SVG illustration for communication mascot.
+- `mascot_creativity`: SVG illustration for creativity mascot.
+- `hero_bg`: Background image for the hero section.
 
 ---
 
 ## Discourse Version Compatibility
-- Minimum: **3.1.0.beta** (Plugin API 0.8+)
+
+- Minimum: **3.1.0** (Required for Glimmer components in themes)
 - Tested on: 3.2.x, 3.3.x
-- Not compatible with: Discourse versions < 2.9 (no `apiInitializer`)
+- **Requirement**: Must have the `custom_homepage` plugin or core support for the modifier enabled.

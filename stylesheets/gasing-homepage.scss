@@ -33,22 +33,37 @@
 /* --- Import Fonts --- */
 @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap");
 
-/* --- Hide default Discourse content when custom homepage is active --- */
-
-// Menyembunyikan Header Discourse
-.d-header {
+/* --- Hide default Discourse header (Homepage only) --- */
+.gasing-home-active .d-header,
+.custom-homepage .d-header {
   display: none !important;
 }
 
-// Menghapus padding atas bawaan Discourse agar hero banner naik ke paling atas
-#main-outlet-wrapper {
+/* Hilangkan padding atas bawaan Discourse — homepage only */
+.gasing-home-active #main-outlet-wrapper,
+.gasing-home-active #main-outlet,
+.custom-homepage #main-outlet-wrapper,
+.custom-homepage #main-outlet {
   padding-top: 0 !important;
 }
 
-#main-outlet {
-  padding-top: 0 !important;
+.gasing-home-active #main-outlet-wrapper,
+.gasing-home-active #main-outlet,
+.custom-homepage #main-outlet-wrapper,
+.custom-homepage #main-outlet {
+  background: linear-gradient(160deg, #1e40af 0%, #2563eb 40%, #1d4ed8 100%) !important;
+  min-height: 100vh;
 }
 
+.gasing-home-active #main-outlet > .container,
+.gasing-home-active .wrap,
+.custom-homepage #main-outlet > .container,
+.custom-homepage .wrap {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Wrapper utama custom homepage — transparan */
 .custom-homepage-wrapper {
   width: 100%;
 }
@@ -56,10 +71,13 @@
 /* --- Base Layout --- */
 .gc-homepage {
   font-family: var(--gc-font);
-  max-width: 1200px;
+  /* Transparan — background biru berasal dari wrapper di atas */
+  background: transparent;
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 0 20px 40px;
+  padding: 24px 24px 48px;
   color: var(--gc-gray-900);
+  box-sizing: border-box;
 }
 
 /* ===== HERO BANNER ===== */

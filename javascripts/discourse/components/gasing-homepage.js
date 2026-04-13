@@ -19,7 +19,13 @@ export default class GasingHomepage extends Component {
 
   constructor() {
     super(...arguments);
+    document.body.classList.add("gasing-home-active");
     this.fetchAllData();
+  }
+
+  willDestroy() {
+    super.willDestroy(...arguments);
+    document.body.classList.remove("gasing-home-active");
   }
 
   // ─── Asset URLs (served from Discourse's theme asset pipeline) ────────────

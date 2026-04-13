@@ -29,38 +29,39 @@
   --gc-font-display: "Poppins", "Nunito", system-ui, sans-serif;
 }
 
-/* ─── HIDE DEFAULT DISCOURSE HEADER ─────────────────────────────────────────
-   We hide the stock header globally so the custom sidebar takes full control.
-   The .gasing-sidebar plugin replaces all navigation & profile chrome.
+/* ─── HIDE DEFAULT DISCOURSE HEADER (Homepage only) ─────────────────────────
+   Scope: body mendapat class `.gasing-home-active` yang ditambahkan oleh
+   komponen Glimmer <GasingHomepage /> saat mounted (lihat
+   javascripts/discourse/components/gasing-homepage.js).
+   `.custom-homepage` dipertahankan sebagai fallback class bawaan Discourse.
    ─────────────────────────────────────────────────────────────────────────── */
-#site-header,
-.d-header,
-.d-header-wrap {
+.gasing-home-active #site-header,
+.gasing-home-active .d-header,
+.gasing-home-active .d-header-wrap,
+.custom-homepage #site-header,
+.custom-homepage .d-header,
+.custom-homepage .d-header-wrap {
   display: none !important;
 }
 
-/* Compensate: remove the top-padding that Discourse normally adds for the header */
-#main-outlet-wrapper,
-#main-outlet,
-.wrap {
-  padding-top: 0 !important;
-  margin-top: 0 !important;
-}
-
-/* Hide default Discourse sidebar (we replace it) */
-#d-sidebar,
-.sidebar-wrapper,
-.sidebar-container {
-  display: none !important;
-}
-
-/* Remove padding Discourse applies when its own sidebar is active */
-body.has-sidebar-page .wrap,
-body.sidebar-animate .wrap {
+/* Compensate: reset layout & padding — homepage only */
+.gasing-home-active #main-outlet-wrapper,
+.gasing-home-active #main-outlet,
+.gasing-home-active .wrap,
+.custom-homepage #main-outlet-wrapper,
+.custom-homepage #main-outlet,
+.custom-homepage .wrap {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  border-radius: 0 !important;
+  max-width: 100% !important;
   padding-left: 0 !important;
+  padding-right: 0 !important;
 }
 
 /* ─── Custom homepage outlet padding reset ───────────────────────────────── */
+.gasing-home-active #main-outlet-wrapper,
 .custom-homepage #main-outlet-wrapper {
   padding-top: 0;
 }
@@ -75,10 +76,10 @@ body.sidebar-animate .wrap {
 .gc-homepage {
   font-family: var(--gc-font);
   /* Center within available space (whole page minus sidebar handled by body padding from sidebar plugin) */
-  max-width: 1100px;
+  max-width: auto;
   width: 100%;
-  margin: 0 auto;
-  padding: 24px 24px 40px;
+  margin: auto auto;
+  padding: 24px 60px;
   color: var(--gc-gray-900);
   box-sizing: border-box;
 }

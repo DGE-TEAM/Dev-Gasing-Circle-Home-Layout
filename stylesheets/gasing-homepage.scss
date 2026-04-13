@@ -1,7 +1,8 @@
 /* ============================================
-   GASING COMMUNITY HOMEPAGE — v5
+   GASING COMMUNITY HOMEPAGE - Theme Component
    ============================================ */
 
+/* --- CSS Variables --- */
 :root {
   --gc-blue: #2563eb;
   --gc-blue-dark: #1d4ed8;
@@ -29,89 +30,72 @@
   --gc-font-display: "Poppins", "Nunito", system-ui, sans-serif;
 }
 
-/* ─── HIDE DEFAULT DISCOURSE HEADER ─────────────────────────────────────────
-   We hide the stock header globally so the custom sidebar takes full control.
-   The .gasing-sidebar plugin replaces all navigation & profile chrome.
-   ─────────────────────────────────────────────────────────────────────────── */
-#site-header,
-.d-header,
-.d-header-wrap {
+/* --- Import Fonts --- */
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap");
+
+/* --- Hide default Discourse content when custom homepage is active --- */
+
+// Menyembunyikan Header Discourse
+.d-header {
   display: none !important;
 }
 
-/* Compensate: remove the top-padding that Discourse normally adds for the header */
-#main-outlet-wrapper,
-#main-outlet,
-.wrap {
+// Menghapus padding atas bawaan Discourse agar hero banner naik ke paling atas
+#main-outlet-wrapper {
   padding-top: 0 !important;
-  margin-top: 0 !important;
 }
 
-/* Hide default Discourse sidebar (we replace it) */
-#d-sidebar,
-.sidebar-wrapper,
-.sidebar-container {
-  display: none !important;
+#main-outlet {
+  padding-top: 0 !important;
 }
 
-/* Remove padding Discourse applies when its own sidebar is active */
-body.has-sidebar-page .wrap,
-body.sidebar-animate .wrap {
-  padding-left: 0 !important;
+.custom-homepage-wrapper {
+  width: 100%;
 }
 
-/* ─── Custom homepage outlet padding reset ───────────────────────────────── */
-.custom-homepage #main-outlet-wrapper {
-  padding-top: 0;
-}
-
-/* ===== BASE =====
-   The sidebar (220px expanded / 64px collapsed) is a fixed element.
-   We center the page content within the remaining viewport space by using
-   auto margins AFTER accounting for the sidebar offset.
-   We do this via a wrapper that uses padding-left equal to the sidebar width,
-   letting margin: auto do the centering naturally inside it.
-*/
+/* --- Base Layout --- */
 .gc-homepage {
   font-family: var(--gc-font);
-  /* Center within available space (whole page minus sidebar handled by body padding from sidebar plugin) */
-  max-width: 1100px;
-  width: 100%;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 24px 24px 40px;
+  padding: 0 20px 40px;
   color: var(--gc-gray-900);
-  box-sizing: border-box;
-}
-
-.gc-homepage *,
-.gc-homepage *::before,
-.gc-homepage *::after {
-  box-sizing: border-box;
 }
 
 /* ===== HERO BANNER ===== */
 .gc-hero {
-  /* Fallback gradient if image hasn't loaded yet */
-  background-color: #2563eb;
-  background-size: cover;
-  background-position: center top;
-  background-repeat: no-repeat;
-  /* No border-radius — the image itself has the curved bottom */
-  border-radius: 20px;
-  padding: 40px 48px 80px; /* extra bottom padding for the curve cutout */
+  background: var(--gc-blue-gradient);
+  border-radius: var(--gc-radius);
+  padding: 32px 40px;
   margin-bottom: 24px;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   position: relative;
-  overflow: visible; /* allow mascots to overflow slightly */
-  min-height: 220px;
+  overflow: hidden;
+  min-height: 180px;
 }
 
-/* Remove old pseudo-element decorations — the image handles the look */
-.gc-hero::before,
+.gc-hero::before {
+  content: "";
+  position: absolute;
+  top: -30%;
+  right: -5%;
+  width: 300px;
+  height: 300px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 50%;
+}
+
 .gc-hero::after {
-  display: none;
+  content: "";
+  position: absolute;
+  bottom: -40%;
+  right: 15%;
+  width: 200px;
+  height: 200px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 50%;
 }
 
 .gc-hero__content {
@@ -147,40 +131,21 @@ body.sidebar-animate .wrap {
   font-size: 14px;
 }
 
-/* Hero Mascots Container */
-.gc-hero__mascots {
-  position: relative;
+.gc-hero__mascot {
   flex-shrink: 0;
-  width: 280px;
-  height: 200px;
+  width: 200px;
+  height: 160px;
   z-index: 1;
 }
 
-.gc-hero__mascot-img {
-  position: absolute;
-  object-fit: contain;
-  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
-  pointer-events: none;
-}
-
-/* Maskot Creativity (ungu) - besar, posisi utama di kanan */
-.gc-hero__mascot-creativity {
-  width: 220px;
-  height: auto;
-  right: -20px;
-  top: -30px;
-  transform: rotate(5deg);
-  z-index: 2;
-}
-
-/* Maskot Logic (biru berkacamata) - kecil, mengintip dari bawah */
-.gc-hero__mascot-logic {
-  width: 120px;
-  height: auto;
-  left: -10px;
-  bottom: -10px;
-  transform: rotate(-8deg);
-  z-index: 1;
+.gc-hero__mascot-placeholder {
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: var(--gc-radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* ===== BUTTONS ===== */
@@ -193,7 +158,7 @@ body.sidebar-animate .wrap {
   font-family: var(--gc-font);
   font-weight: 700;
   font-size: 14px;
-  text-decoration: none !important;
+  text-decoration: none;
   cursor: pointer;
   border: none;
   transition: all 0.2s ease;
@@ -202,46 +167,43 @@ body.sidebar-animate .wrap {
 
 .gc-btn--primary {
   background: var(--gc-gray-900);
-  color: #fff !important;
+  color: #fff;
 }
 
 .gc-btn--primary:hover {
   background: #000;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  color: #fff !important;
 }
 
 .gc-btn--success {
   background: var(--gc-green);
-  color: #fff !important;
+  color: #fff;
 }
 
 .gc-btn--success:hover {
   background: #15803d;
-  color: #fff !important;
 }
 
 .gc-btn--outline {
   background: rgba(255, 255, 255, 0.9);
-  color: var(--gc-gray-900) !important;
+  color: var(--gc-gray-900);
   border: 1.5px solid var(--gc-gray-200);
 }
 
 .gc-btn--outline:hover {
   background: #fff;
-  color: var(--gc-gray-900) !important;
+  border-color: var(--gc-gray-300);
 }
 
 .gc-btn--sm {
-  padding: 6px 14px;
+  padding: 6px 16px;
   font-size: 12px;
-  gap: 4px;
 }
 
 .gc-btn--game {
   background: var(--gc-blue);
-  color: #fff !important;
+  color: #fff;
   width: 100%;
   justify-content: center;
   padding: 12px 24px;
@@ -251,7 +213,6 @@ body.sidebar-animate .wrap {
 .gc-btn--game:hover {
   background: var(--gc-blue-dark);
   transform: translateY(-1px);
-  color: #fff !important;
 }
 
 /* ===== GRID LAYOUT ===== */
@@ -266,7 +227,6 @@ body.sidebar-animate .wrap {
   display: flex;
   flex-direction: column;
   gap: 24px;
-  min-width: 0;
 }
 
 /* ===== CARDS ===== */
@@ -306,9 +266,8 @@ body.sidebar-animate .wrap {
   align-items: center;
   justify-content: center;
   color: var(--gc-gray-500);
-  text-decoration: none !important;
+  text-decoration: none;
   transition: all 0.2s;
-  flex-shrink: 0;
 }
 
 .gc-card__more:hover {
@@ -319,6 +278,7 @@ body.sidebar-animate .wrap {
 
 /* ===== EXCLUSIVE CONTENT ===== */
 .gc-exclusive {
+  background: #fff;
   text-align: center;
 }
 
@@ -340,6 +300,11 @@ body.sidebar-animate .wrap {
   margin: 8px 0 20px;
 }
 
+.gc-exclusive__illustration {
+  border-radius: var(--gc-radius-sm);
+  overflow: hidden;
+}
+
 .gc-exclusive__img-placeholder {
   background: linear-gradient(135deg, #e0f2fe, #bfdbfe, #ddd6fe);
   height: 200px;
@@ -359,6 +324,7 @@ body.sidebar-animate .wrap {
   gap: 4px;
   margin-bottom: 16px;
   border-bottom: 2px solid var(--gc-gray-100);
+  padding-bottom: 0;
 }
 
 .gc-tabs__tab {
@@ -369,15 +335,15 @@ body.sidebar-animate .wrap {
   color: var(--gc-gray-500);
   background: none;
   border: none;
-  border-bottom: 2.5px solid transparent;
   cursor: pointer;
+  position: relative;
   transition: color 0.2s;
   margin-bottom: -2px;
 }
 
 .gc-tabs__tab--active {
   color: var(--gc-blue);
-  border-bottom-color: var(--gc-blue);
+  border-bottom: 2.5px solid var(--gc-blue);
 }
 
 .gc-tabs__tab:hover {
@@ -393,12 +359,11 @@ body.sidebar-animate .wrap {
 .gc-topic-item {
   display: flex;
   gap: 12px;
-  padding: 14px 4px;
+  padding: 14px 0;
   border-bottom: 1px solid var(--gc-gray-100);
-  text-decoration: none !important;
-  color: inherit !important;
+  text-decoration: none;
+  color: inherit;
   transition: background 0.15s;
-  border-radius: var(--gc-radius-xs);
 }
 
 .gc-topic-item:last-child {
@@ -407,6 +372,10 @@ body.sidebar-animate .wrap {
 
 .gc-topic-item:hover {
   background: var(--gc-gray-50);
+  border-radius: var(--gc-radius-xs);
+  margin: 0 -8px;
+  padding-left: 8px;
+  padding-right: 8px;
 }
 
 .gc-topic-item__avatar-placeholder {
@@ -499,26 +468,15 @@ body.sidebar-animate .wrap {
   border-radius: var(--gc-radius-sm);
   overflow: hidden;
   position: relative;
-  min-height: 180px;
-  display: flex;
-  flex-direction: column;
 }
 
 .gc-meetup__event-img {
   width: 100%;
-  height: 100%;
-  min-height: 180px;
+  height: 140px;
   background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  position: absolute;
-  top: 0;
-  left: 0;
+  position: relative;
 }
 
-.gc-meetup__event-img--alt {
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-}
-
-/* Button di pojok kanan atas card meetup */
 .gc-meetup__event-overlay {
   position: absolute;
   top: 12px;
@@ -528,40 +486,38 @@ body.sidebar-animate .wrap {
 
 .gc-meetup__event-info {
   padding: 10px 12px;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0));
+  background: rgba(0, 0, 0, 0.7);
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
   color: #fff;
-  z-index: 2;
 }
 
 .gc-meetup__event-info h3 {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   margin: 0 0 2px;
-  color: #fff;
 }
 
 .gc-meetup__event-info span {
   font-size: 11px;
-  opacity: 0.85;
-  color: #fff;
+  opacity: 0.8;
 }
 
 /* ===== NEWS ===== */
 .gc-news__list {
   display: flex;
   flex-direction: column;
+  gap: 4px;
 }
 
 .gc-news__item {
   display: flex;
   gap: 12px;
-  padding: 12px 4px;
-  text-decoration: none !important;
-  color: inherit !important;
+  padding: 10px 0;
+  text-decoration: none;
+  color: inherit;
   border-bottom: 1px solid var(--gc-gray-100);
   transition: opacity 0.15s;
 }
@@ -593,6 +549,10 @@ body.sidebar-animate .wrap {
   margin: 0 0 4px;
   line-height: 1.4;
   color: var(--gc-gray-900);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .gc-news__date {
@@ -603,30 +563,16 @@ body.sidebar-animate .wrap {
 /* ===== MINI GAME ===== */
 .gc-minigame {
   overflow: hidden;
-  padding: 0 !important;
+  padding: 0;
 }
 
-.gc-minigame__illustration {
+.gc-minigame__img-placeholder {
   width: 100%;
-  height: 220px;
+  height: 200px;
   background: linear-gradient(135deg, #34d399, #059669, #047857);
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
-  position: relative;
-}
-
-.gc-minigame__mascot {
-  width: 180px;
-  height: auto;
-  object-fit: contain;
-  filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.2));
-  transition: transform 0.3s ease;
-}
-
-.gc-minigame:hover .gc-minigame__mascot {
-  transform: scale(1.05) rotate(3deg);
 }
 
 .gc-minigame__content {
@@ -649,7 +595,7 @@ body.sidebar-animate .wrap {
   line-height: 1.5;
 }
 
-/* ===== BELAJAR ===== */
+/* ===== BELAJAR SECTION ===== */
 .gc-belajar__label {
   display: inline-block;
   font-size: 13px;
@@ -658,7 +604,7 @@ body.sidebar-animate .wrap {
   margin-bottom: 8px;
 }
 
-/* ===== LOADING ===== */
+/* ===== LOADING STATE ===== */
 .gc-loading {
   display: flex;
   align-items: center;
@@ -689,33 +635,28 @@ body.sidebar-animate .wrap {
   .gc-grid {
     grid-template-columns: 1fr;
   }
+
   .gc-hero {
     flex-direction: column;
     padding: 24px;
     text-align: center;
   }
+
   .gc-hero__greeting {
     font-size: 22px;
   }
+
   .gc-hero__cta-actions {
     justify-content: center;
     flex-wrap: wrap;
   }
-  .gc-hero__mascots {
-    width: 200px;
-    height: 150px;
+
+  .gc-hero__mascot {
+    width: 140px;
+    height: 110px;
     margin-top: 16px;
   }
-  .gc-hero__mascot-creativity {
-    width: 160px;
-    right: 0;
-    top: -10px;
-  }
-  .gc-hero__mascot-logic {
-    width: 90px;
-    left: 0;
-    bottom: 0;
-  }
+
   .gc-meetup__cards {
     grid-template-columns: 1fr;
   }
@@ -725,18 +666,55 @@ body.sidebar-animate .wrap {
   .gc-homepage {
     padding: 0 12px 24px;
   }
+
   .gc-hero {
     padding: 20px;
     margin-bottom: 16px;
   }
+
   .gc-hero__greeting {
     font-size: 20px;
   }
+
   .gc-card {
     padding: 16px;
     border-radius: 12px;
   }
+
   .gc-grid {
     gap: 16px;
   }
+}
+
+/* ===== DARK MODE SUPPORT ===== */
+.discourse-dark-mode .gc-card {
+  background: #1e1e2e;
+  border-color: #2a2a3a;
+}
+
+.discourse-dark-mode .gc-homepage {
+  color: #e0e0e0;
+}
+
+.discourse-dark-mode .gc-card__title,
+.discourse-dark-mode .gc-topic-item__title,
+.discourse-dark-mode .gc-news__title,
+.discourse-dark-mode .gc-minigame__title {
+  color: #f0f0f0;
+}
+
+.discourse-dark-mode .gc-topic-item:hover {
+  background: #252535;
+}
+
+.discourse-dark-mode .gc-tabs {
+  border-bottom-color: #2a2a3a;
+}
+
+.discourse-dark-mode .gc-topic-item {
+  border-bottom-color: #2a2a3a;
+}
+
+.discourse-dark-mode .gc-news__item {
+  border-bottom-color: #2a2a3a;
 }

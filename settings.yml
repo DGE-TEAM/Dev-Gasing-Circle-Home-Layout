@@ -1,36 +1,19 @@
-# ── Hero Section ──────────────────────────────────────────────
-hero_greeting_prefix: "Selamat Datang"
-hero_promo_text: "Apa kamu mau daftar menjadi Trainer di pelatihan Gasing tanggal 5-20 Maret 2026?"
-hero_cta_label: "Saya daftar!"
-hero_cta_url: "/signup-trainer"
-hero_social_proof: "50 guru mendaftar"
-hero_bg_color_start: "#1a4fba"
-hero_bg_color_end: "#00bcd4"
+hero_greeting:
+  type: string
+  default: "Selamat Datang"
 
-# ── Category slugs (used for API fetches) ─────────────────────
-komunitas_category_slug: "forum"
-news_category_slug: "gasing-academy-news"
-belajar_category_slug: "materi-gasing"
+hero_cta_text:
+  type: string
+  default: "Apa kamu mau daftar menjadi Trainer di pelatihan Gasing tanggal 5-20 Maret 2026?"
 
-# ── Eksklusif Konten card ─────────────────────────────────────
-eksklusif_label: "Feb 2026"
-eksklusif_title: "Eksklusif Konten"
-eksklusif_subtitle: "Yuk belajar trik perkalian 2 digit, dan dapatkan soal-soal penjumlahan <5."
-eksklusif_topic_url: "/c/konten-eksklusif"
+hero_cta_button_text:
+  type: string
+  default: "Saya daftar!"
 
-# ── Virtual Meet-Up ───────────────────────────────────────────
-meetup_category_slug: "virtual-meet-up"
+hero_cta_link:
+  type: string
+  default: "/t/pendaftaran-trainer"
 
-# ── Game card ─────────────────────────────────────────────────
-game_tag: "Computational Logic"
-game_title: "Katak dan Daun Teratai"
-game_description: "Perhatikan dan ingatlah urutan daun teratai yg muncul!"
-game_cta_label: "Ayo Main!"
-game_cta_url: "/t/katak-dan-daun-teratai"
-game_cover_color: "#4caf50"
-
-# ── Topics per widget ─────────────────────────────────────────
-komunitas_topics_count: "4"
-news_topics_count: "3"
-belajar_topics_count: "4"
-meetup_events_count: "2"
+hero_cta_count_text:
+  type: string
+  default: "50 guru mendaftar"

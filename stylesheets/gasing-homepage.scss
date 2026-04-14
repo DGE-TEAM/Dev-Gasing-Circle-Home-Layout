@@ -501,6 +501,8 @@
   height: 140px;
   background: linear-gradient(135deg, #6366f1, #8b5cf6);
   position: relative;
+  object-fit: cover;
+  display: block;
 }
 
 .gc-meetup__event-overlay {

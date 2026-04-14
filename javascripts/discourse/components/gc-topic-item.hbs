@@ -1,0 +1,47 @@
+{{!
+  gc-topic-item — Baris topic reusable untuk daftar topic.
+
+  Args:
+    @topic    {Object}  - Topic object dari mapTopics()
+    @showMeta {Boolean} - Tampilkan baris timestamp "baru saja" (default: false)
+
+  Digunakan oleh: section Komunitas (showMeta=true) dan Belajar (showMeta=false)
+}}
+<a href="/t/{{@topic.slug}}/{{@topic.id}}" class="gc-topic-item">
+  <div class="gc-topic-item__avatar">
+    <div class="gc-topic-item__avatar-placeholder"></div>
+  </div>
+  <div class="gc-topic-item__content">
+    <h3 class="gc-topic-item__title">{{@topic.title}}</h3>
+
+    {{#if @showMeta}}
+      <div class="gc-topic-item__meta">
+        <span class="gc-topic-item__age">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15 10 20 15 15 20"></polyline>
+            <path d="M4 4v7a4 4 0 0 0 4 4h12"></path>
+          </svg>
+          baru saja
+        </span>
+      </div>
+    {{/if}}
+
+    <div class="gc-topic-item__stats">
+      {{#each @topic.tags as |tag|}}
+        <span class="gc-tag">{{tag}}</span>
+      {{/each}}
+      <span class="gc-topic-item__likes">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+        </svg>
+        {{@topic.likeCount}}
+      </span>
+      <span class="gc-topic-item__replies">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        </svg>
+        {{@topic.replyCount}}
+      </span>
+    </div>
+  </div>
+</a>

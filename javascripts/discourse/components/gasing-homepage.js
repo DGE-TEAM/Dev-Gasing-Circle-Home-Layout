@@ -4,6 +4,12 @@ import { service } from "@ember/service";
 import { action } from "@ember/object";
 import { ajax } from "discourse/lib/ajax";
 import getURL from "discourse-common/lib/get-url";
+import {
+  ENDPOINTS,
+  extractTopics,
+  mapTopics,
+  mapNews,
+} from "../lib/homepage-api";
 
 export default class GasingHomepage extends Component {
   @service currentUser;
@@ -32,60 +38,30 @@ export default class GasingHomepage extends Component {
     document.body.classList.remove("gasing-home-active");
   }
 
-  // ─── Asset URLs (served from Discourse's theme asset pipeline) ────────────
-  // Discourse exposes theme assets at:
-  //   /theme-javascripts/<theme-id>/... or via the `theme_uploads` helper.
-  // The reliable cross-version way is to use the `themePrefix` registered in
-  // about.json as the `assets` map.  The key in the map becomes a CSS variable
-  // AND a global JS variable: `settings.theme_uploads.<key>`.
+  // ─── Theme asset URLs ──────────────────────────────────────────────────────
   //
-  // In Glimmer components the safest method is to construct the path via the
-  // known Discourse theme-upload URL pattern:
-  //   /uploads/default/original/...
-  // BUT since we can't know the hash at build-time, we rely on Discourse's
-  // built-in `__theme_upload_url` function injected into the theme JS scope.
-  // If that is unavailable we fall back to the `getURL` helper with a known path.
+  // Asset yang didaftarkan di about.json diekspos oleh Discourse saat runtime
+  // via `__theme_upload_url(key)`. Fallback `settings.theme_uploads` untuk
+  // versi Discourse yang lebih lama.
 
-  get mascotCreativityUrl() {
-    return this._themeAssetUrl("mascot_creativity");
-  }
-
-  get mascotLogicUrl() {
-    return this._themeAssetUrl("mascot_logic");
-  }
-
-  get mascotCommunicationUrl() {
-    return this._themeAssetUrl("mascot_communication");
-  }
-
-  get heroBgUrl() {
-    return this._themeAssetUrl("hero_bg");
-  }
+  get mascotCreativityUrl()    { return this._themeAssetUrl("mascot_creativity"); }
+  get mascotLogicUrl()         { return this._themeAssetUrl("mascot_logic"); }
+  get mascotCommunicationUrl() { return this._themeAssetUrl("mascot_communication"); }
+  get heroBgUrl()              { return this._themeAssetUrl("hero_bg"); }
 
   _themeAssetUrl(key) {
-    // `__theme_upload_url` is injected by Discourse into the theme JS bundle.
     // eslint-disable-next-line no-undef
-    if (typeof __theme_upload_url === "function") {
-      // eslint-disable-next-line no-undef
-      return __theme_upload_url(key);
-    }
-    // Fallback: settings.theme_uploads is populated by Discourse for theme components
-    if (
-      typeof settings !== "undefined" &&
-      settings.theme_uploads &&
-      settings.theme_uploads[key]
-    ) {
+    if (typeof __theme_upload_url === "function") { return __theme_upload_url(key); }
+    if (typeof settings !== "undefined" && settings.theme_uploads?.[key]) {
       return getURL(settings.theme_uploads[key]);
     }
     return "";
   }
 
   // ─── User ─────────────────────────────────────────────────────────────────
+
   get displayName() {
-    if (this.currentUser) {
-      return this.currentUser.name || this.currentUser.username;
-    }
-    return "Pengunjung";
+    return this.currentUser?.name ?? this.currentUser?.username ?? "Pengunjung";
   }
 
   get isLoggedIn() {
@@ -93,9 +69,7 @@ export default class GasingHomepage extends Component {
   }
 
   get visibleTopics() {
-    return this.activeTab === "trending"
-      ? this.trendingTopics
-      : this.latestTopics;
+    return this.activeTab === "trending" ? this.trendingTopics : this.latestTopics;
   }
 
   @action
@@ -103,123 +77,83 @@ export default class GasingHomepage extends Component {
     this.activeTab = tab;
   }
 
-  // ─── Data ─────────────────────────────────────────────────────────────────
-  mapTopics(topics) {
-    return (topics || []).map((t) => ({
-      id: t.id,
-      title: t.title,
-      slug: t.slug,
-      excerpt: t.excerpt || "",
-      likeCount: t.like_count || 0,
-      replyCount: t.posts_count ? t.posts_count - 1 : 0,
-      tags: t.tags || [],
-      imageUrl: t.image_url || null,
-      createdAt: t.created_at,
-    }));
-  }
-
-  mapNews(topics) {
-    return (topics || []).map((t) => {
-      const wordCount = (t.excerpt || t.title || "").split(/\s+/).length * 8;
-      const readMin = Math.max(1, Math.round(wordCount / 200));
-      return {
-        id: t.id,
-        title: t.title,
-        slug: t.slug,
-        excerpt: t.excerpt || "",
-        imageUrl: t.image_url || null,
-        // Use Discourse's cooked excerpt thumbnail if available
-        thumbnailUrl: t.thumbnails?.[0]?.url || t.image_url || null,
-        createdAt: t.created_at,
-        formattedDate: this._formatDate(t.created_at),
-        readTime: readMin,
-        views: t.views || 0,
-        likeCount: t.like_count || 0,
-      };
-    });
-  }
+  // ─── Data fetching ────────────────────────────────────────────────────────
 
   async fetchAllData() {
     try {
-      const [
-        trendingRes,
-        latestRes,
-        newsRes,
-        materiRes,
-        meetupRes,
-        exclusiveRes,
-        minigameRes,
-      ] = await Promise.allSettled([
-        ajax("/top/weekly.json?per_page=5"),
-        ajax("/latest.json?per_page=5"),
-        ajax("/c/ga-updates/l/latest.json?per_page=5"),
-        ajax("/c/gasing-library/l/latest.json?per_page=5"),
-        ajax("/c/webinar/l/latest.json?per_page=5"),
-        ajax("/c/downloads/l/latest.json?per_page=5"),
-        ajax("/c/gasing-library/mini-games/l/latest.json?per_page=5"),
+      // Jalankan section topics dan hero count secara paralel
+      await Promise.all([
+        this._fetchTopicSections(),
+        this._fetchHeroCount(),
       ]);
-
-      if (trendingRes.status === "fulfilled" && trendingRes.value?.topic_list?.topics) {
-        this.trendingTopics = this.mapTopics(trendingRes.value.topic_list.topics.slice(0, 5));
-      }
-
-      if (latestRes.status === "fulfilled" && latestRes.value?.topic_list?.topics) {
-        this.latestTopics = this.mapTopics(latestRes.value.topic_list.topics.slice(0, 5));
-      }
-
-      if (newsRes.status === "fulfilled" && newsRes.value?.topic_list?.topics) {
-        this.newsTopics = this.mapNews(newsRes.value.topic_list.topics.slice(0, 3));
-      }
-
-      if (materiRes.status === "fulfilled" && materiRes.value?.topic_list?.topics) {
-        this.materiTopics = this.mapTopics(materiRes.value.topic_list.topics.slice(0, 5));
-      }
-
-      if (meetupRes.status === "fulfilled" && meetupRes.value?.topic_list?.topics) {
-        this.meetupTopics = this.mapNews(meetupRes.value.topic_list.topics.slice(0, 2));
-      }
-
-      if (exclusiveRes.status === "fulfilled" && exclusiveRes.value?.topic_list?.topics) {
-        const topics = this.mapNews(exclusiveRes.value.topic_list.topics);
-        this.exclusiveTopic = topics.length > 0 ? topics[0] : null;
-      }
-
-      if (minigameRes.status === "fulfilled" && minigameRes.value?.topic_list?.topics) {
-        const minigames = this.mapTopics(minigameRes.value.topic_list.topics);
-        this.minigameTopic = minigames.length > 0 ? minigames[0] : null;
-      }
-
-      // Fetch hero cta topic count if link is a valid topic URL
-      const heroLink = this.siteSettings.hero_cta_link;
-      if (heroLink && heroLink.startsWith("/t/")) {
-        try {
-          const path = heroLink.split(/[?#]/)[0];
-          const heroRes = await ajax(`${path}.json`);
-          if (heroRes) {
-            this.heroRegisteredCount = heroRes.posts_count ? heroRes.posts_count - 1 : 0;
-          }
-        } catch (e) {
-          // ignore error
-        }
-      }
     } catch (e) {
-      console.error("GasingHomepage: Error loading data", e);
+      console.error("GasingHomepage: fetchAllData failed", e);
     } finally {
       this.isLoading = false;
     }
   }
 
-  _formatDate(dateStr) {
-    if (!dateStr) return "";
+  /**
+   * Fetch semua section topic homepage secara paralel.
+   * Setiap request bersifat independen — kegagalan satu tidak memblokir lainnya.
+   */
+  async _fetchTopicSections() {
+    const results = await Promise.allSettled([
+      ajax(ENDPOINTS.trending),
+      ajax(ENDPOINTS.latest),
+      ajax(ENDPOINTS.news),
+      ajax(ENDPOINTS.materi),
+      ajax(ENDPOINTS.meetup),
+      ajax(ENDPOINTS.exclusive),
+      ajax(ENDPOINTS.minigame),
+    ]);
+
+    const [
+      trendingRes,
+      latestRes,
+      newsRes,
+      materiRes,
+      meetupRes,
+      exclusiveRes,
+      minigameRes,
+    ] = results;
+
+    if (extractTopics(trendingRes).length) {
+      this.trendingTopics = mapTopics(extractTopics(trendingRes).slice(0, 5));
+    }
+    if (extractTopics(latestRes).length) {
+      this.latestTopics = mapTopics(extractTopics(latestRes).slice(0, 5));
+    }
+    if (extractTopics(newsRes).length) {
+      this.newsTopics = mapNews(extractTopics(newsRes).slice(0, 3));
+    }
+    if (extractTopics(materiRes).length) {
+      this.materiTopics = mapTopics(extractTopics(materiRes).slice(0, 5));
+    }
+    if (extractTopics(meetupRes).length) {
+      this.meetupTopics = mapNews(extractTopics(meetupRes).slice(0, 2));
+    }
+
+    const exclusiveAll = mapNews(extractTopics(exclusiveRes));
+    this.exclusiveTopic = exclusiveAll[0] ?? null;
+
+    const minigameAll = mapTopics(extractTopics(minigameRes));
+    this.minigameTopic = minigameAll[0] ?? null;
+  }
+
+  /**
+   * Fetch jumlah pendaftar dari topic hero CTA (jika link mengarah ke topic).
+   * Non-critical — kegagalan diabaikan agar tidak memblokir loading utama.
+   */
+  async _fetchHeroCount() {
+    const heroLink = this.siteSettings.hero_cta_link;
+    if (!heroLink?.startsWith("/t/")) return;
     try {
-      const d = new Date(dateStr);
-      return d.toLocaleDateString("id-ID", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      });
+      const path = heroLink.split(/[?#]/)[0];
+      const res = await ajax(`${path}.json`);
+      this.heroRegisteredCount = res?.posts_count ? res.posts_count - 1 : 0;
     } catch {
-      return "";
+      // Biarkan heroRegisteredCount tetap 0
     }
   }
 }

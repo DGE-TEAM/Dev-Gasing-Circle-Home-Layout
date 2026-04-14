@@ -53,12 +53,12 @@ The dashboard is organized into a hero section and a two-column grid:
 | Section | Content Type | Source |
 |---|---|---|
 | **Hero Banner** | Greeting & CTA | `settings.yml` + Hardcoded |
-| **Eksklusif Konten** | Promo Card | Static (in template) |
+| **Eksklusif Konten** | Promo Card | `/c/downloads/l/latest.json` |
 | **Komunitas Gasing** | Trending / Latest Tabs | `/top/weekly.json` & `/latest.json` |
 | **Gasing Library** | Latest Materials | `/c/gasing-library/l/latest.json` |
-| **Virtual Meet-Up** | Event Tiles | Static (in template) |
-| **Academy News** | News List | `/c/ga-update/l/latest.json` |
-| **Mini Game** | Promo Card | Static (in template) |
+| **Virtual Meet-Up** | Event Tiles | `/c/webinar/l/latest.json` |
+| **Academy News** | News List | `/c/ga-updates/l/latest.json` |
+| **Mini Game** | Promo Card | `/c/gasing-library/mini-games/l/latest.json` |
 
 ---
 
@@ -66,12 +66,15 @@ The dashboard is organized into a hero section and a two-column grid:
 
 All data is fetched via Discourse's **public JSON API** using `Promise.allSettled` for performance:
 
-| Widget | Endpoint | Count |
+| Widget | Endpoint | Count (Displayed) |
 |---|---|---|
-| Komunitas (Trending) | `/top/weekly.json` | 5 topics |
-| Komunitas (Latest) | `/latest.json` | 5 topics |
-| Academy News | `/c/ga-update/l/latest.json` | 3 topics |
-| Gasing Library | `/c/gasing-library/l/latest.json` | 5 topics |
+| Komunitas (Trending) | `/top/weekly.json?per_page=5` | 5 topics |
+| Komunitas (Latest) | `/latest.json?per_page=5` | 5 topics |
+| Academy News | `/c/ga-updates/l/latest.json?per_page=5` | 3 topics |
+| Gasing Library | `/c/gasing-library/l/latest.json?per_page=5` | 5 topics |
+| Virtual Meet-Up | `/c/webinar/l/latest.json?per_page=5` | 2 topics |
+| Eksklusif Konten | `/c/downloads/l/latest.json?per_page=5` | 1 topic |
+| Mini Game | `/c/gasing-library/mini-games/l/latest.json?per_page=5` | 1 topic |
 
 ---
 
@@ -84,7 +87,8 @@ The following settings can be configured via the Discourse Admin UI:
 - `hero_cta_text`: Main call-to-action description.
 - `hero_cta_button_text`: Label for the CTA button.
 - `hero_cta_link`: Destination URL for the CTA button.
-- `hero_cta_count_text`: Social proof/counter text (e.g., "50 guru mendaftar").
+- `hero_cta_max_count`: Target maximum count for social proof/progress (e.g., 50).
+- `hero_cta_count_label`: Label appended to the counter (e.g., "guru mendaftar").
 
 ### Theme Assets (`about.json`)
 

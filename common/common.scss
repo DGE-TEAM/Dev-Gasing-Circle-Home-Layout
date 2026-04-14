@@ -323,6 +323,13 @@
   text-align: center;
 }
 
+/* Saat exclusive card adalah <a> tag */
+.gc-exclusive--link {
+  display: block;
+  text-decoration: none !important;
+  color: inherit !important;
+}
+
 .gc-exclusive__badge {
   display: inline-block;
   background: var(--gc-gray-900);
@@ -339,6 +346,25 @@
   font-size: 14px;
   line-height: 1.6;
   margin: 8px 0 20px;
+}
+
+.gc-exclusive__illustration {
+  border-radius: var(--gc-radius-sm);
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  position: relative;
+}
+
+.gc-exclusive__img {
+  position: absolute;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  object-fit: cover;
+  object-position: center;
+  display: block;
 }
 
 .gc-exclusive__img-placeholder {
@@ -596,9 +622,67 @@
   color: var(--gc-gray-900);
 }
 
+.gc-news__thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+.gc-news__thumb-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .gc-news__date {
   font-size: 12px;
   color: var(--gc-gray-500);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.gc-news__meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.gc-news__readtime {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--gc-gray-500);
+}
+
+.gc-news__excerpt {
+  font-size: 12px;
+  color: var(--gc-gray-500);
+  line-height: 1.5;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.gc-news__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 24px 0;
+  color: var(--gc-gray-500);
+  font-size: 14px;
+  text-align: center;
 }
 
 /* ===== MINI GAME ===== */
@@ -740,4 +824,72 @@
   .gc-grid {
     gap: 16px;
   }
+}
+
+/* ===== SKELETON LOADING ===== */
+/* Animasi shimmer untuk placeholder saat data belum selesai di-fetch */
+@keyframes gc-skeleton-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.gc-skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--gc-gray-100) 25%,
+    var(--gc-gray-200) 50%,
+    var(--gc-gray-100) 75%
+  );
+  background-size: 200% 100%;
+  animation: gc-skeleton-shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--gc-radius-xs);
+}
+
+.gc-skeleton--text {
+  height: 14px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.gc-skeleton--title { width: 75%; }
+.gc-skeleton--meta  { width: 45%; }
+
+/* ===== DARK MODE ===== */
+.discourse-dark-mode .gc-card {
+  background: #1e1e2e;
+  border-color: #2a2a3a;
+}
+
+.discourse-dark-mode .gc-homepage {
+  color: #e0e0e0;
+}
+
+.discourse-dark-mode .gc-card__title,
+.discourse-dark-mode .gc-topic-item__title,
+.discourse-dark-mode .gc-news__title,
+.discourse-dark-mode .gc-minigame__title {
+  color: #f0f0f0;
+}
+
+.discourse-dark-mode .gc-topic-item:hover {
+  background: #252535;
+}
+
+.discourse-dark-mode .gc-tabs {
+  border-bottom-color: #2a2a3a;
+}
+
+.discourse-dark-mode .gc-topic-item,
+.discourse-dark-mode .gc-news__item {
+  border-bottom-color: #2a2a3a;
+}
+
+.discourse-dark-mode .gc-skeleton {
+  background: linear-gradient(
+    90deg,
+    #2a2a3a 25%,
+    #333345 50%,
+    #2a2a3a 75%
+  );
+  background-size: 200% 100%;
 }

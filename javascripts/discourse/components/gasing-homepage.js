@@ -14,6 +14,10 @@ export default class GasingHomepage extends Component {
   @tracked latestTopics = [];
   @tracked newsTopics = [];
   @tracked materiTopics = [];
+  @tracked meetupTopics = [];
+  @tracked exclusiveTopic = null;
+  @tracked minigameTopic = null;
+  @tracked heroRegisteredCount = 0;
   @tracked activeTab = "trending";
   @tracked isLoading = true;
 
@@ -137,47 +141,66 @@ export default class GasingHomepage extends Component {
 
   async fetchAllData() {
     try {
-      const [trendingRes, latestRes] = await Promise.allSettled([
+      const [
+        trendingRes,
+        latestRes,
+        newsRes,
+        materiRes,
+        meetupRes,
+        exclusiveRes,
+        minigameRes,
+      ] = await Promise.allSettled([
         ajax("/top/weekly.json?per_page=5"),
         ajax("/latest.json?per_page=5"),
-      ]);
-
-      if (
-        trendingRes.status === "fulfilled" &&
-        trendingRes.value?.topic_list?.topics
-      ) {
-        this.trendingTopics = this.mapTopics(
-          trendingRes.value.topic_list.topics.slice(0, 5),
-        );
-      }
-
-      if (
-        latestRes.status === "fulfilled" &&
-        latestRes.value?.topic_list?.topics
-      ) {
-        this.latestTopics = this.mapTopics(
-          latestRes.value.topic_list.topics.slice(0, 5),
-        );
-      }
-
-      const [newsRes, materiRes] = await Promise.allSettled([
-        ajax("/c/ga-update/l/latest.json?per_page=5"),
+        ajax("/c/ga-updates/l/latest.json?per_page=5"),
         ajax("/c/gasing-library/l/latest.json?per_page=5"),
+        ajax("/c/webinar/l/latest.json?per_page=5"),
+        ajax("/c/downloads/l/latest.json?per_page=5"),
+        ajax("/c/gasing-library/mini-games/l/latest.json?per_page=5"),
       ]);
+
+      if (trendingRes.status === "fulfilled" && trendingRes.value?.topic_list?.topics) {
+        this.trendingTopics = this.mapTopics(trendingRes.value.topic_list.topics.slice(0, 5));
+      }
+
+      if (latestRes.status === "fulfilled" && latestRes.value?.topic_list?.topics) {
+        this.latestTopics = this.mapTopics(latestRes.value.topic_list.topics.slice(0, 5));
+      }
 
       if (newsRes.status === "fulfilled" && newsRes.value?.topic_list?.topics) {
-        this.newsTopics = this.mapTopics(
-          newsRes.value.topic_list.topics.slice(0, 3),
-        );
+        this.newsTopics = this.mapNews(newsRes.value.topic_list.topics.slice(0, 3));
       }
 
-      if (
-        materiRes.status === "fulfilled" &&
-        materiRes.value?.topic_list?.topics
-      ) {
-        this.materiTopics = this.mapTopics(
-          materiRes.value.topic_list.topics.slice(0, 5),
-        );
+      if (materiRes.status === "fulfilled" && materiRes.value?.topic_list?.topics) {
+        this.materiTopics = this.mapTopics(materiRes.value.topic_list.topics.slice(0, 5));
+      }
+
+      if (meetupRes.status === "fulfilled" && meetupRes.value?.topic_list?.topics) {
+        this.meetupTopics = this.mapNews(meetupRes.value.topic_list.topics.slice(0, 2));
+      }
+
+      if (exclusiveRes.status === "fulfilled" && exclusiveRes.value?.topic_list?.topics) {
+        const topics = this.mapNews(exclusiveRes.value.topic_list.topics);
+        this.exclusiveTopic = topics.length > 0 ? topics[0] : null;
+      }
+
+      if (minigameRes.status === "fulfilled" && minigameRes.value?.topic_list?.topics) {
+        const minigames = this.mapTopics(minigameRes.value.topic_list.topics);
+        this.minigameTopic = minigames.length > 0 ? minigames[0] : null;
+      }
+
+      // Fetch hero cta topic count if link is a valid topic URL
+      const heroLink = this.siteSettings.hero_cta_link;
+      if (heroLink && heroLink.startsWith("/t/")) {
+        try {
+          const path = heroLink.split(/[?#]/)[0];
+          const heroRes = await ajax(`${path}.json`);
+          if (heroRes) {
+            this.heroRegisteredCount = heroRes.posts_count ? heroRes.posts_count - 1 : 0;
+          }
+        } catch (e) {
+          // ignore error
+        }
       }
     } catch (e) {
       console.error("GasingHomepage: Error loading data", e);

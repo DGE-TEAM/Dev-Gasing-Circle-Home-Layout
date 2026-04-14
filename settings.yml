@@ -14,6 +14,10 @@ hero_cta_link:
   type: string
   default: "/t/pendaftaran-trainer"
 
-hero_cta_count_text:
+hero_cta_max_count:
+  type: integer
+  default: 50
+
+hero_cta_count_label:
   type: string
-  default: "50 guru mendaftar"
+  default: "guru mendaftar"

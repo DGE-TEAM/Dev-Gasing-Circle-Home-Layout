@@ -321,6 +321,14 @@
 .gc-exclusive__illustration {
   border-radius: var(--gc-radius-sm);
   overflow: hidden;
+  height: 200px;
+}
+
+.gc-exclusive__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .gc-exclusive__img-placeholder {
@@ -554,6 +562,14 @@
   border-radius: var(--gc-radius-xs);
   background: linear-gradient(135deg, var(--gc-gray-200), var(--gc-gray-300));
   flex-shrink: 0;
+  overflow: hidden;
+}
+
+.gc-news__thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .gc-news__content {

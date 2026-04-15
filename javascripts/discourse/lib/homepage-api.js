@@ -10,7 +10,7 @@
 // penambahan query param tanpa perlu mencari di dalam komponen.
 export const ENDPOINTS = {
   trending:  "/top/weekly.json?per_page=5",
-  latest:    "/latest.json?per_page=5",
+  latest:    "/c/general/l/latest.json?per_page=5",
   news:      "/c/ga-updates/l/latest.json?per_page=5",
   materi:    "/c/gasing-library/l/latest.json?per_page=5",
   meetup:    "/c/webinar/l/latest.json?per_page=5",

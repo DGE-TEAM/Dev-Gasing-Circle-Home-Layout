@@ -524,9 +524,39 @@
   color: var(--gc-gray-500);
 }
 
+button.gc-topic-item__likes {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  outline: none;
+  transition: opacity 0.2s, transform 0.1s;
+}
+
+button.gc-topic-item__likes:hover {
+  opacity: 0.8;
+}
+
+button.gc-topic-item__likes:active {
+  transform: scale(0.95);
+}
+
 .gc-topic-item__likes svg {
   color: var(--gc-red);
   opacity: 0.7;
+}
+
+button.gc-topic-item__likes.is-liked svg {
+  opacity: 1;
+}
+
+button.gc-topic-item__likes.is-loading svg {
+  animation: gc-scale-pulse 1s infinite;
+}
+
+@keyframes gc-scale-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
 }
 
 /* ===== TAGS ===== */

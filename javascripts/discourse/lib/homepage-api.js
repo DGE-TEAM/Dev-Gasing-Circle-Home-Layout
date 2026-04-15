@@ -144,6 +144,7 @@ export function mapTopics(topics = [], users = []) {
       slug: t.slug,
       excerpt: t.excerpt ?? "",
       likeCount: t.like_count ?? 0,
+      liked: t.liked ?? t.has_liked ?? false,
       replyCount: t.posts_count ? t.posts_count - 1 : 0,
       tags: t.tags ?? [],
       imageUrl: t.image_url ?? null,
@@ -179,6 +180,7 @@ export function mapNews(topics = []) {
       readTime: readMin,
       views: t.views ?? 0,
       likeCount: t.like_count ?? 0,
+      liked: t.liked ?? t.has_liked ?? false,
     };
   });
 }

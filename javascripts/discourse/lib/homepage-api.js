@@ -32,6 +32,32 @@ export function extractTopics(result) {
 }
 
 /**
+ * Ambil array users dari response Promise.allSettled.
+ * Digunakan bersama extractTopics untuk resolve avatar poster.
+ *
+ * @param {Object} result - Satu item dari Promise.allSettled
+ * @returns {Array}
+ */
+export function extractUsers(result) {
+  return result?.value?.users ?? [];
+}
+
+/**
+ * Build URL avatar Discourse dari avatar_template.
+ * Template berformat "/user_avatar/.../{size}/....png" — {size} diganti angka px.
+ *
+ * @param {Array}  users  - Array users dari response
+ * @param {number} userId - ID user yang dicari
+ * @param {number} size   - Ukuran avatar dalam px (default: 45)
+ * @returns {string|null}
+ */
+export function avatarUrl(users, userId, size = 45) {
+  const user = users.find((u) => u.id === userId);
+  if (!user?.avatar_template) return null;
+  return user.avatar_template.replace("{size}", size);
+}
+
+/**
  * Pilih thumbnail terkecil yang lebarnya >= targetWidth.
  * Fallback ke yang terbesar jika tidak ada yang memenuhi syarat.
  *
@@ -102,21 +128,31 @@ export function formatDate(dateStr) {
  * Digunakan oleh section: Komunitas, Belajar, Minigame.
  *
  * @param {Array} topics
+ * @param {Array} users  - Array users dari response (untuk resolve avatar OP)
  * @returns {Array}
  */
-export function mapTopics(topics = []) {
-  return topics.map((t) => ({
-    id: t.id,
-    title: t.title,
-    slug: t.slug,
-    excerpt: t.excerpt ?? "",
-    likeCount: t.like_count ?? 0,
-    replyCount: t.posts_count ? t.posts_count - 1 : 0,
-    tags: t.tags ?? [],
-    imageUrl: t.image_url ?? null,
-    createdAt: t.created_at,
-    relativeAge: relativeTime(t.created_at),
-  }));
+export function mapTopics(topics = [], users = []) {
+  return topics.map((t) => {
+    const opPoster = t.posters?.find((p) =>
+      p.description?.includes("Original Poster")
+    ) ?? t.posters?.[0];
+    const opUserId = opPoster?.user_id ?? null;
+    const opUser = users.find((u) => u.id === opUserId);
+    return {
+      id: t.id,
+      title: t.title,
+      slug: t.slug,
+      excerpt: t.excerpt ?? "",
+      likeCount: t.like_count ?? 0,
+      replyCount: t.posts_count ? t.posts_count - 1 : 0,
+      tags: t.tags ?? [],
+      imageUrl: t.image_url ?? null,
+      createdAt: t.created_at,
+      relativeAge: relativeTime(t.created_at),
+      authorUsername: opUser?.username ?? null,
+      authorAvatar: avatarUrl(users, opUserId, 45),
+    };
+  });
 }
 
 /**

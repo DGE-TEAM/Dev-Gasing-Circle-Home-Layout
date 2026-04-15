@@ -7,6 +7,7 @@ import getURL from "discourse-common/lib/get-url";
 import {
   ENDPOINTS,
   extractTopics,
+  extractUsers,
   mapTopics,
   mapNews,
 } from "../lib/homepage-api";
@@ -119,16 +120,16 @@ export default class GasingHomepage extends Component {
     ] = results;
 
     if (extractTopics(trendingRes).length) {
-      this.trendingTopics = mapTopics(extractTopics(trendingRes).slice(0, 5));
+      this.trendingTopics = mapTopics(extractTopics(trendingRes).slice(0, 5), extractUsers(trendingRes));
     }
     if (extractTopics(latestRes).length) {
-      this.latestTopics = mapTopics(extractTopics(latestRes).slice(0, 5));
+      this.latestTopics = mapTopics(extractTopics(latestRes).slice(0, 5), extractUsers(latestRes));
     }
     if (extractTopics(newsRes).length) {
       this.newsTopics = mapNews(extractTopics(newsRes).slice(0, 3));
     }
     if (extractTopics(materiRes).length) {
-      this.materiTopics = mapTopics(extractTopics(materiRes).slice(0, 5));
+      this.materiTopics = mapTopics(extractTopics(materiRes).slice(0, 5), extractUsers(materiRes));
     }
     if (extractTopics(meetupRes).length) {
       this.meetupTopics = mapNews(extractTopics(meetupRes).slice(0, 2));
@@ -137,7 +138,7 @@ export default class GasingHomepage extends Component {
     const exclusiveAll = mapNews(extractTopics(exclusiveRes));
     this.exclusiveTopic = exclusiveAll[0] ?? null;
 
-    const minigameAll = mapTopics(extractTopics(minigameRes));
+    const minigameAll = mapTopics(extractTopics(minigameRes), extractUsers(minigameRes));
     this.minigameTopic = minigameAll[0] ?? null;
   }
 

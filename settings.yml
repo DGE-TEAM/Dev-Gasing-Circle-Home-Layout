@@ -1,3 +1,11 @@
+# ============================================================
+# GASING CIRCLE — Unified Theme Component Settings
+# Homepage Layout + Academy News Layout
+# ============================================================
+
+# ----------------------------------------------------------
+# HERO (Landing Page)
+# ----------------------------------------------------------
 hero_greeting:
   type: string
   default: "Selamat Datang"
@@ -21,3 +29,132 @@ hero_cta_max_count:
 hero_cta_count_label:
   type: string
   default: "guru mendaftar"
+
+# ----------------------------------------------------------
+# ACADEMY NEWS — Target Category
+# ----------------------------------------------------------
+news_category_id:
+  default: 0
+  type: integer
+  description: "ID kategori Gasing Academy News (untuk indikator unread di sidebar). Set ke ID kategori /c/ga-updates."
+
+gc_category_slug:
+  default: "ga-updates"
+  type: string
+  description: "Slug kategori tempat layout News aktif (cek URL /c/slug-nya)."
+
+# ----------------------------------------------------------
+# ACADEMY NEWS — Brand Colors
+# ----------------------------------------------------------
+gc_primary_color:
+  default: "#1976D2"
+  type: string
+  description: "Warna utama (tombol, state aktif, tautan)"
+
+gc_primary_dark_color:
+  default: "#1565C0"
+  type: string
+  description: "Warna utama gelap (hover tombol, pill aktif)"
+
+gc_primary_light_color:
+  default: "#E3F2FD"
+  type: string
+  description: "Warna utama terang (latar badge, hover background)"
+
+# ----------------------------------------------------------
+# ACADEMY NEWS — Hero Banner
+# ----------------------------------------------------------
+gc_hero_title:
+  default: "Gasing Academy News 📢"
+  type: string
+  description: "Judul utama hero banner Academy News"
+
+gc_hero_subtitle:
+  default: "Ikuti berita dan perkembangan terkini seputar Gasing!"
+  type: string
+  description: "Teks deskripsi di bawah judul hero banner Academy News"
+
+gc_hero_start_color:
+  default: "#00BCD4"
+  type: string
+  description: "Warna awal gradasi hero banner (kiri)"
+
+gc_hero_end_color:
+  default: "#1565C0"
+  type: string
+  description: "Warna akhir gradasi hero banner (kanan)"
+
+# ----------------------------------------------------------
+# ACADEMY NEWS — Backgrounds
+# ----------------------------------------------------------
+gc_page_bg_color:
+  default: "#F5F5F5"
+  type: string
+  description: "Warna latar halaman utama"
+
+gc_card_bg_color:
+  default: "#ffffff"
+  type: string
+  description: "Warna latar kartu artikel dan panel detail"
+
+gc_card_border_color:
+  default: "#E0E0E0"
+  type: string
+  description: "Warna border/garis kartu artikel"
+
+# ----------------------------------------------------------
+# ACADEMY NEWS — Text
+# ----------------------------------------------------------
+gc_text_primary_color:
+  default: "#212121"
+  type: string
+  description: "Warna teks utama"
+
+gc_text_secondary_color:
+  default: "#757575"
+  type: string
+  description: "Warna teks sekunder"
+
+gc_text_muted_color:
+  default: "#9E9E9E"
+  type: string
+  description: "Warna teks redup"
+
+gc_divider_color:
+  default: "#E0E0E0"
+  type: string
+  description: "Warna garis pemisah"
+
+# ----------------------------------------------------------
+# ACADEMY NEWS — Tag Colors
+# ----------------------------------------------------------
+gc_tag_pelatihan_color:
+  default: "#FF9800"
+  type: string
+
+gc_tag_pendidikan_color:
+  default: "#1976D2"
+  type: string
+
+gc_tag_dunia_color:
+  default: "#10B981"
+  type: string
+
+gc_tag_lainnya_color:
+  default: "#8B5CF6"
+  type: string
+
+# ----------------------------------------------------------
+# ACADEMY NEWS — Font
+# ----------------------------------------------------------
+gc_font_body:
+  default: "Nunito"
+  type: enum
+  choices:
+    - Nunito
+    - Inter
+    - Poppins
+    - Roboto
+    - "Open Sans"
+    - Lato
+  description: "Jenis font untuk komponen Academy News"

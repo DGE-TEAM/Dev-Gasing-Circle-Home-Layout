@@ -1,8 +1,10 @@
 {
-  "name": "Gasing Circle - Gasing Academy Homepage Layout",
+  "name": "Gasing Circle - Unified Layout (Homepage + Academy News)",
   "about_url": null,
   "license_url": null,
   "authors": "Digital Gasing Edukasi Team",
+  "theme_version": "2.0.0",
+  "minimum_discourse_version": "3.1.0",
   "component": true,
   "assets": {
     "mascot_logic": "assets/mascot-logic.svg",
@@ -12,5 +14,7 @@
   },
   "modifiers": {
     "custom_homepage": true
-  }
+  },
+  "color_schemes": [],
+  "screenshots": []
 }

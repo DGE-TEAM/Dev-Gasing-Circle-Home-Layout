@@ -2,28 +2,6 @@
    GASING COMMUNITY HOMEPAGE — v5
    ============================================ */
 
-/* Academy News styles — scoped via body.category-ga-updates inside the file
-   AND the DOM elements only exist on /c/ga-updates (rendered by
-   news-logic.js api-initializer), so Landing Page is unaffected. */
-@import "../stylesheets/academy-news";
-
-/* Sidebar unread indicator for "Gasing Academy News" link.
-   Toggled by sidebar-news-indicator.js api-initializer. */
-.sidebar-section-link.has-unread {
-  position: relative;
-}
-.sidebar-section-link.has-unread::after {
-  content: "";
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  margin-left: 6px;
-  border-radius: 50%;
-  background: #ef4444;
-  vertical-align: middle;
-  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.25);
-}
-
 :root {
   --gc-blue: #2563eb;
   --gc-blue-dark: #1d4ed8;
@@ -121,7 +99,7 @@
   background-repeat: no-repeat;
   /* No border-radius — the image itself has the curved bottom */
   border-radius: 20px;
-  padding: 10px 16px 40px; /* extra bottom padding for the curve cutout */
+  padding: 10px 16 40px; /* extra bottom padding for the curve cutout */
   margin-bottom: 24px;
   display: flex;
   align-items: flex-start;
@@ -146,7 +124,6 @@
   font-family: var(--gc-font-display);
   font-size: 32px;
   font-weight: 800;
-  text-align: center;
   color: #fff;
   margin: 0 0 16px;
   line-height: 1.2;
@@ -205,15 +182,6 @@
   bottom: -10px;
   transform: rotate(-8deg);
   z-index: 1;
-}
-
-/* Maskot Communication (oren) */
-.mascot_communication {
-  width: 140px;
-  height: auto;
-  left: 50px;
-  bottom: -20px;
-  z-index: 0;
 }
 
 /* ===== BUTTONS ===== */

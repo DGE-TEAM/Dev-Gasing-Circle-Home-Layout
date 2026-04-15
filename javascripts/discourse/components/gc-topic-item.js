@@ -19,12 +19,22 @@ export default class GcTopicItem extends Component {
     this.isLiked = this.args.topic.liked || false;
   }
 
+  get canLike() {
+    if (!this.currentUser) return true;
+    if (this.args.topic.authorUsername && this.currentUser.username === this.args.topic.authorUsername) {
+      return false;
+    }
+    return true;
+  }
+
   @action
   async toggleLike(event) {
     if (event) {
       event.preventDefault();
       event.stopPropagation();
     }
+    
+    if (!this.canLike) return;
     
     if (!this.currentUser) {
       if (this.dialog && this.dialog.alert) {

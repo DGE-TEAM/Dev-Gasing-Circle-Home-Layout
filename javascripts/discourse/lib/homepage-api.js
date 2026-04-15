@@ -46,6 +46,37 @@ export function bestThumbnail(thumbnails, targetWidth = 600) {
 }
 
 /**
+ * Hitung waktu relatif berbahasa Indonesia dari string tanggal ISO.
+ * Contoh output: "baru saja", "5 menit lalu", "2 jam lalu", "3 hari lalu".
+ *
+ * @param {string} dateStr
+ * @returns {string}
+ */
+export function relativeTime(dateStr) {
+  if (!dateStr) return "";
+  const diff = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000);
+  if (diff < 60)  return "baru saja";
+  if (diff < 3600) {
+    const m = Math.floor(diff / 60);
+    return `${m} menit lalu`;
+  }
+  if (diff < 86400) {
+    const h = Math.floor(diff / 3600);
+    return `${h} jam lalu`;
+  }
+  if (diff < 2592000) {
+    const d = Math.floor(diff / 86400);
+    return `${d} hari lalu`;
+  }
+  if (diff < 31536000) {
+    const mo = Math.floor(diff / 2592000);
+    return `${mo} bulan lalu`;
+  }
+  const y = Math.floor(diff / 31536000);
+  return `${y} tahun lalu`;
+}
+
+/**
  * Format string tanggal ISO ke format tanggal lokal Indonesia.
  *
  * @param {string} dateStr
@@ -84,6 +115,7 @@ export function mapTopics(topics = []) {
     tags: t.tags ?? [],
     imageUrl: t.image_url ?? null,
     createdAt: t.created_at,
+    relativeAge: relativeTime(t.created_at),
   }));
 }
 

@@ -146,7 +146,7 @@ export function mapTopics(topics = [], users = []) {
       likeCount: t.like_count ?? 0,
       liked: t.liked ?? t.has_liked ?? false,
       replyCount: t.posts_count ? t.posts_count - 1 : 0,
-      tags: t.tags ?? [],
+      tags: (t.tags ?? []).map(tag => typeof tag === 'object' ? (tag.name || tag.id || tag.text || "") : tag).filter(Boolean),
       imageUrl: t.image_url ?? null,
       createdAt: t.created_at,
       relativeAge: relativeTime(t.created_at),

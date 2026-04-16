@@ -70,5 +70,5 @@ export function cleanupBodyClass() {
 }
 
 export function isTrending(topic) {
-  return (topic.views || 0) >= 5 || (topic.like_count || 0) >= 1;
+  return (topic.views || 0) >= 20 || (topic.like_count || 0) >= 4;
 }
